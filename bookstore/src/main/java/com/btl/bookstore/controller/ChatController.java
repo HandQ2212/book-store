@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -48,11 +46,24 @@ public class ChatController {
         notification.setContent(saved.getContent());
         notification.setTimestamp(saved.getTimestamp().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
 
-        messagingTemplate.convertAndSendToUser(
-            saved.getReceiver().getId().toString(),
-            "/queue/messages",
-            notification
-        );
+        // If sender is user, notify all admins
+        if (!saved.getSender().getRole().equals("ROLE_ADMIN")) {
+            List<UserDtls> admins = userRepository.findByRole("ROLE_ADMIN");
+            for (UserDtls admin : admins) {
+                messagingTemplate.convertAndSendToUser(
+                    admin.getId().toString(),
+                    "/queue/messages",
+                    notification
+                );
+            }
+        } else {
+            // If sender is admin, notify only the user
+            messagingTemplate.convertAndSendToUser(
+                saved.getReceiver().getId().toString(),
+                "/queue/messages",
+                notification
+            );
+        }
     }
 
     @GetMapping("/chat/messages/{chatRoomId}")
@@ -118,25 +129,30 @@ public class ChatController {
         String currentUserEmail = principal.getName();
         UserDtls currentUser = userRepository.findByEmail(currentUserEmail);
 
-        List<String> chatRooms = chatMessageService.findUserChatRooms(currentUser.getId());
+        // Get all chat rooms with users (not admin-to-admin chats)
+        List<String> allChatRooms = chatMessageService.findAllUserChatRooms();
         List<Map<String, Object>> result = new ArrayList<>();
 
-        for (String chatRoomId : chatRooms) {
-            String[] userIds = chatRoomId.split("_");
-            Integer otherUserId = Integer.parseInt(userIds[0]);
-            if (otherUserId.equals(currentUser.getId())) {
-                otherUserId = Integer.parseInt(userIds[1]);
-            }
+        for (String chatRoomId : allChatRooms) {
+            // chatRoomId format: "user_{userId}"
+            if (chatRoomId.startsWith("user_")) {
+                String userIdStr = chatRoomId.substring(5); // Remove "user_" prefix
+                try {
+                    Integer userId = Integer.parseInt(userIdStr);
+                    UserDtls user = userRepository.findById(userId).orElse(null);
 
-            UserDtls otherUser = userRepository.findById(otherUserId).orElse(null);
-            if (otherUser != null) {
-                Map<String, Object> userData = new HashMap<>();
-                userData.put("id", otherUser.getId());
-                userData.put("name", otherUser.getName());
-                userData.put("email", otherUser.getEmail());
-                userData.put("chatRoomId", chatRoomId);
-                userData.put("unreadCount", chatMessageService.countUnreadMessagesInChatRoom(chatRoomId, currentUser.getId()));
-                result.add(userData);
+                    if (user != null && !user.getRole().equals("ROLE_ADMIN")) {
+                        Map<String, Object> userData = new HashMap<>();
+                        userData.put("id", user.getId());
+                        userData.put("name", user.getName());
+                        userData.put("email", user.getEmail());
+                        userData.put("chatRoomId", chatRoomId);
+                        userData.put("unreadCount", chatMessageService.countUnreadMessagesInChatRoom(chatRoomId, currentUser.getId()));
+                        result.add(userData);
+                    }
+                } catch (NumberFormatException e) {
+                    // Skip invalid chatRoomId
+                }
             }
         }
 

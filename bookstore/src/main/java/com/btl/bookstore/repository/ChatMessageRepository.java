@@ -7,12 +7,18 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.btl.bookstore.model.ChatMessage;
 
+/**
+ * Chat message repository
+ */
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
     List<ChatMessage> findByChatRoomIdOrderByTimestampAsc(String chatRoomId);
 
     @Query("SELECT DISTINCT c.chatRoomId FROM ChatMessage c WHERE c.sender.id = ?1 OR c.receiver.id = ?1")
     List<String> findDistinctChatRoomsByUserId(Integer userId);
+
+    @Query("SELECT c.chatRoomId FROM ChatMessage c GROUP BY c.chatRoomId ORDER BY MAX(c.timestamp) DESC")
+    List<String> findAllDistinctChatRooms();
 
     @Query("SELECT COUNT(c) FROM ChatMessage c WHERE c.receiver.id = ?1 AND c.isRead = false")
     Long countUnreadMessagesByReceiverId(Integer receiverId);

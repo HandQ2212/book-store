@@ -36,6 +36,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
+    public List<String> findAllUserChatRooms() {
+        return chatMessageRepository.findAllDistinctChatRooms();
+    }
+
+    @Override
     public Long countUnreadMessages(Integer userId) {
         return chatMessageRepository.countUnreadMessagesByReceiverId(userId);
     }

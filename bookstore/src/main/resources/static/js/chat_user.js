@@ -36,10 +36,10 @@ function initializeElements() {
 
 function sendMessage() {
     const content = chatInput.value.trim();
-    if (content && currentAdminId && stompClient) {
+    if (content && stompClient) {
         const chatMessage = {
             sender: { id: currentUserId },
-            receiver: { id: currentAdminId },
+            receiver: { id: currentAdminId || 0 }, // Dummy admin ID, will be sent to all admins
             content: content,
             chatRoomId: currentChatRoomId
         };
@@ -78,15 +78,17 @@ function addMessageToUI(message) {
 }
 
 function loadAdminAndMessages() {
-    // Get first admin
+    // Use chatRoomId format: "user_{userId}"
+    currentChatRoomId = 'user_' + currentUserId;
+
+    // Get first admin for receiver (backward compatibility)
     fetch('/chat/admin-list')
         .then(response => response.json())
         .then(admins => {
             if (admins.length > 0) {
                 currentAdminId = admins[0].id;
-                currentChatRoomId = createChatRoomId(currentUserId, currentAdminId);
-                loadMessages();
             }
+            loadMessages();
         });
 }
 
@@ -108,9 +110,6 @@ function loadMessages() {
     }
 }
 
-function createChatRoomId(userId1, userId2) {
-    return userId1 < userId2 ? userId1 + '_' + userId2 : userId2 + '_' + userId1;
-}
 
 function updateUnreadCount() {
     fetch('/chat/unread-count')
