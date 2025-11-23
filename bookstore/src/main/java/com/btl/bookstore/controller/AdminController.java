@@ -205,7 +205,8 @@ public class AdminController {
         } else {
             session.setAttribute("errorMsg", "Something wrong on server");
         }
-        return "redirect:/admin/loaddAddBook";
+        return "redirect:/admin/loadAddBook";
+//        return "redirect:/admin/add_book";
     }
 
     @GetMapping("/books")

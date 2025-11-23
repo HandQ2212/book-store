@@ -24,7 +24,7 @@ public class Book {
     @Column(length = 500)
     private String title;
 
-    @Column(length = 5000)
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
     private String category;
