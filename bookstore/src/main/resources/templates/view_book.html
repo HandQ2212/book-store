@@ -2,100 +2,113 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
-    <title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>Book Details - Book Store</title>
 </head>
 <body>
 <section>
-    <div class="container card-sh"
-         style="margin-top: 70px; margin-bottom: 100px">
-
+    <div class="container" style="margin-top: 90px; margin-bottom: 100px">
         <div class="col-md-12 p-5">
             <div class="row">
                 <th:block th:if="${session.succMsg}">
-                    <p class="text-success alert alert-success text-center" role="alert">[[${session.succMsg}]]</p>
-                    <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle"></i> [[${session.succMsg}]]
+                        <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+                    </div>
                 </th:block>
 
                 <th:block th:if="${session.errorMsg}">
-                    <p class="text-danger text-center  alert alert-danger">[[${session.errorMsg}]]</p>
-                    <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
-
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle"></i> [[${session.errorMsg}]]
+                        <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+                    </div>
                 </th:block>
-                <div class="col-md-6 text-end">
-                    <img alt="" th:src="@{'/img/book_img/'+${book.image}}" width="300px"
-                         height="250px">
+
+                <div class="col-md-6 text-center mb-4">
+                    <div class="card shadow-lg p-3" style="border: none; border-radius: 12px;">
+                        <img alt="Book Cover" th:src="@{'/img/book_img/'+${book.image}}" 
+                             class="img-fluid rounded" style="max-height: 400px; object-fit: contain;">
+                    </div>
                 </div>
 
                 <div class="col-md-6">
-
-                    <p class="fs-3">[[${book.title}]]</p>
-                    <p>
-                        <span class="fw-bold">Description : </span><br>[[${book.description}]]
-                    </p>
-                    <p>
-                        <span class="fw-bold"> Book Details: </span> <br> Status
-                        :
+                    <h2 class="fw-bold text-primary mb-3">[[${book.title}]]</h2>
+                    
+                    <div class="mb-3">
+                        <span class="badge bg-info text-dark me-2">[[${book.category}]]</span>
                         <th:block th:if="${book.stock>0}">
-                            <span class="badge bg-success">Available</span>
+                            <span class="badge bg-success"><i class="fas fa-check"></i> In Stock</span>
                         </th:block>
-
                         <th:block th:unless="${book.stock>0}">
-                            <span class="badge bg-warning">out of stock</span>
+                            <span class="badge bg-danger"><i class="fas fa-times"></i> Out of Stock</span>
                         </th:block>
+                    </div>
 
-
-                        <br> Category: [[${book.category}]]<br> Policy : 7
-                        Days Replacement & Return
-                    </p>
-                    <p class="fs-5 fw-bold">
-                        Price :&nbsp; &nbsp; &nbsp; &nbsp;<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
-                        [[${book.discountPrice}]] <span
-                            class="fs-6 text-decoration-line-through text-secondary">[[${book.price}]]</span>
-                        <span class="fs-6  text-success">[[${book.discount}]]%
-								off</span>
-                    </p>
-
-                    <div class="row">
-                        <div class="col-md-4 text-success text-center p-2">
-                            <i class="fas fa-money-bill-wave fa-2x"></i>
-                            <p>Cash On Delivery</p>
+                    <div class="card mb-3" style="border-left: 4px solid #2563eb;">
+                        <div class="card-body">
+                            <p class="text-secondary mb-0">
+                                <i class="fas fa-align-left"></i> <strong>Description</strong>
+                            </p>
+                            <p class="mt-2">[[${book.description}]]</p>
                         </div>
-                        <div class="col-md-4 text-danger text-center p-2">
-                            <i class="fas fa-undo-alt fa-2x"></i>
-                            <p>Return Available</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="fs-5 fw-bold text-dark">
+                            <i class="fas fa-tag"></i> <strong>Price</strong>
+                        </p>
+                        <p class="fs-4">
+                            <th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
+                            <span class="text-success fw-bold">[[${book.discountPrice}]]</span>
+                            <span class="fs-6 text-decoration-line-through text-secondary ms-2">[[${book.price}]]</span>
+                            <span class="badge bg-warning text-dark ms-2">[[${book.discount}]]% OFF</span>
+                        </p>
+                    </div>
+
+                    <div class="row my-4">
+                        <div class="col-md-4">
+                            <div class="text-center p-3" style="background: #f0f7ff; border-radius: 8px;">
+                                <i class="fas fa-money-bill-wave fa-2x text-success"></i>
+                                <p class="mt-2 mb-0 small"><strong>Cash on Delivery</strong></p>
+                            </div>
                         </div>
-                        <div class="col-md-4 text-primary text-center p-2">
-                            <i class="fas fa-truck-moving fa-2x"></i>
-                            <p>Free Shipping</p>
+                        <div class="col-md-4">
+                            <div class="text-center p-3" style="background: #fff0f5; border-radius: 8px;">
+                                <i class="fas fa-undo-alt fa-2x" style="color: #ef4444;"></i>
+                                <p class="mt-2 mb-0 small"><strong>7 Days Return</strong></p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center p-3" style="background: #f0fbff; border-radius: 8px;">
+                                <i class="fas fa-truck-moving fa-2x text-primary"></i>
+                                <p class="mt-2 mb-0 small"><strong>Free Shipping</strong></p>
+                            </div>
                         </div>
                     </div>
 
                     <th:block th:if="${book.stock>0}">
                         <th:block th:if="${user==null}">
-                            <a href="/signin" class="btn btn-danger col-md-12">Add To
-                                Cart</a>
+                            <a href="/signin" class="btn btn-primary btn-lg col-md-12 fw-bold">
+                                <i class="fas fa-shopping-cart"></i> Add To Cart
+                            </a>
                         </th:block>
-
                         <th:block th:unless="${user==null}">
-                            <a
-                                    th:href="@{'/user/addCart?pid='+${book.id}+'&uid='+${user.id}}"
-                                    class="btn btn-danger col-md-12">Add To Cart</a>
+                            <a th:href="@{'/user/addCart?pid='+${book.id}+'&uid='+${user.id}}"
+                               class="btn btn-primary btn-lg col-md-12 fw-bold">
+                                <i class="fas fa-shopping-cart"></i> Add To Cart
+                            </a>
                         </th:block>
-
                     </th:block>
 
                     <th:block th:unless="${book.stock>0}">
-                        <a href="#" class="btn text-white btn-warning col-md-12">Out
-                            of Stock</a>
+                        <button class="btn btn-secondary btn-lg col-md-12 fw-bold" disabled>
+                            <i class="fas fa-ban"></i> Out of Stock
+                        </button>
                     </th:block>
-
                 </div>
             </div>
         </div>
     </div>
-
-
 </section>
 </body>
 </html>

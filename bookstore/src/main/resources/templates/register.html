@@ -2,8 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
-    <title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>Register - Book Store</title>
 </head>
 <body>
 <section>
@@ -13,9 +13,9 @@
                 <img alt="" src="img/ecom.png" width="100%" height="400px">
             </div>
             <div class="col-md-7 p-2">
-                <div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
-                    <div class="card-header text-center">
-                        <p class="fs-4 text-center">Register</p>
+                <div class="card shadow p-3 mb-5 rounded" style="border-top: 4px solid #2563eb;">
+                    <div class="card-header text-center" style="background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white;">
+                        <p class="fs-4 text-center mb-0"><i class="fas fa-user-plus"></i> Create Account</p>
                         <th:block th:if="${session.succMsg}">
                             <p class="text-success fw-bold">[[${session.succMsg}]]</p>
                             <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
@@ -31,70 +31,58 @@
                               method="post">
                             <div class="row">
                                 <div class="col">
-                                    <label class="form-label">Full Name</label> <input required
-                                                                                       class="form-control" name="name" type="text">
+                                    <label class="form-label"><i class="fas fa-user"></i> Full Name</label>
+                                    <input required class="form-control" name="name" type="text" placeholder="Your full name">
                                 </div>
-
                                 <div class="col">
-                                    <label class="form-label">Mobile Number</label> <input
-                                        required class="form-control" name="mobileNumber"
-                                        type="number">
+                                    <label class="form-label"><i class="fas fa-phone"></i> Mobile Number</label>
+                                    <input required class="form-control" name="mobileNumber" type="number" placeholder="+84...">
                                 </div>
-
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Email</label> <input required
-                                                                               class="form-control" name="email" type="email">
+                                <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                                <input required class="form-control" name="email" type="email" placeholder="your@email.com">
                             </div>
 
 
                             <div class="row">
                                 <div class="col">
-                                    <label class="form-label">Address</label> <input required
-                                                                                     class="form-control" name="address" type="text">
+                                    <label class="form-label"><i class="fas fa-map-marker-alt"></i> Address</label>
+                                    <input required class="form-control" name="address" type="text" placeholder="Street address">
                                 </div>
-
                                 <div class="col">
-                                    <label class="form-label">City</label> <input required
-                                                                                  class="form-control" name="city" type="text">
+                                    <label class="form-label"><i class="fas fa-city"></i> City</label>
+                                    <input required class="form-control" name="city" type="text" placeholder="City name">
                                 </div>
-
                             </div>
 
                             <div class="row">
                                 <div class="col">
-                                    <label class="form-label">State</label> <input required
-                                                                                   class="form-control" name="state" type="text">
+                                    <label class="form-label"><i class="fas fa-map"></i> State</label>
+                                    <input required class="form-control" name="state" type="text" placeholder="State name">
                                 </div>
-
                                 <div class="col">
-                                    <label class="form-label">Pincode</label> <input required
-                                                                                     class="form-control" name="pincode" type="number">
+                                    <label class="form-label"><i class="fas fa-mailbox"></i> Pincode</label>
+                                    <input required class="form-control" name="pincode" type="number" placeholder="Postal code">
                                 </div>
-
                             </div>
 
 
                             <div class="row">
                                 <div class="col">
-                                    <label class="form-label">Password</label> <input required
-                                                                                      class="form-control" name="password" type="password" id="pass">
+                                    <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                                    <input required class="form-control" name="password" type="password" id="pass" placeholder="Min. 6 characters">
                                 </div>
-
                                 <div class="col">
-                                    <label class="form-label">Confirm Password</label> <input
-                                        required class="form-control" name="confirmpassword"
-                                        type="password">
+                                    <label class="form-label"><i class="fas fa-check-circle"></i> Confirm Password</label>
+                                    <input required class="form-control" name="confirmpassword" type="password" placeholder="Repeat password">
                                 </div>
-
                             </div>
-
-
 
                             <div class="mb-3">
-                                <label class="form-label">Profile Image</label> <input
-                                    class="form-control" name="img" type="file">
+                                <label class="form-label"><i class="fas fa-image"></i> Profile Image</label>
+                                <input class="form-control" name="img" type="file" accept="image/*">
                             </div>
 
 
@@ -102,15 +90,12 @@
 
 
 
-                            <button type="submit"
-                                    class="btn bg-primary text-white col-md-12">Register</button>
+                            <button type="submit" class="btn btn-primary col-md-12 fw-bold"><i class="fas fa-user-check"></i> Register Now</button>
                         </form>
                     </div>
 
-                    <div class="card-footer text-center">
-
-                        have an account ? <a href="/login" class="text-decoration-none">Login
-                    </a>
+                    <div class="card-footer text-center" style="background-color: #f9fafb;">
+                        Already have an account? <a href="/login" class="text-decoration-none fw-bold text-primary">Login</a>
                     </div>
                 </div>
             </div>
