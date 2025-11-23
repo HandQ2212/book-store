@@ -13,10 +13,10 @@
                 <img alt="bookstore" src="/img/ecom.png" class="w-100 h-100" style="object-fit: cover; border-radius: 12px 0 0 12px;" loading="eager">
             </div>
             <div class="col-md-7 p-4">
-                <div class="card shadow-lg">
-                    <div class="card-header text-center">
-                        <h2 class="mb-0">Login</h2>
-                        <p class="small mt-2">Welcome back to our bookstore</p>
+                <div class="card shadow-lg" style="border: none; border-radius: 12px;">
+                    <div class="card-header text-center" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border-radius: 12px 12px 0 0;">
+                        <h2 class="mb-0" style="color: white;"><i class="fa-solid fa-right-to-bracket"></i> Login</h2>
+                        <p class="small mt-2" style="color: white;">Welcome back to our bookstore</p>
                     </div>
                     <th:block th:if="${param.error}">
                         <div class="alert alert-danger m-3" role="alert">
@@ -44,9 +44,9 @@
                             <button type="submit" class="btn btn-primary w-100 mb-3">Sign In</button>
                         </form>
                     </div>
-                    <div class="card-footer text-center">
-                        <p class="mb-2"><a href="/forgot-password" class="text-decoration-none"><i class="fa-solid fa-key"></i> Forgot Password?</a></p>
-                        <p class="text-muted">Don't have an account? <a href="/register" class="fw-600">Create one</a></p>
+                    <div class="card-footer text-center" style="background-color: #f8f9fa; border-radius: 0 0 12px 12px;">
+                        <p class="mb-2"><a href="/forgot-password" class="text-decoration-none" style="color: var(--secondary-color);"><i class="fa-solid fa-key"></i> Forgot Password?</a></p>
+                        <p class="text-muted">Don't have an account? <a href="/register" class="fw-bold" style="color: var(--secondary-color);">Create one</a></p>
                     </div>
                 </div>
             </div>

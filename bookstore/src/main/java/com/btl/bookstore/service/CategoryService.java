@@ -12,6 +12,8 @@ public interface CategoryService {
 
     public Boolean existCategory(String name);
 
+    public Boolean existCategoryIgnoreCase(String name);
+
     public List<Category> getAllCategory();
 
     public Boolean deleteCategory(int id);

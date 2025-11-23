@@ -143,12 +143,6 @@ public class BookServiceImpl implements BookService {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
         pageBook = bookRepository.findByisActiveTrueAndTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch, ch, pageable);
-
-//        if (ObjectUtils.isEmpty(category)) {
-//            pageBook = bookRepository.findByIsActiveTrue(pageable);
-//        } else {
-//            pageBook = bookRepository.findByCategory(pageable, category);
-//        }
         return pageBook;
     }
 }

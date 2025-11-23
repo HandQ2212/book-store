@@ -126,7 +126,15 @@ public class HomeController {
     }
 
     @GetMapping("/book/{id}")
-    public String book(@PathVariable int id, Model m) {
+    public String book(@PathVariable int id, Model m, Principal principal) {
+        // Restrict access to admin users
+        if (principal != null) {
+            UserDtls user = userService.getUserByEmail(principal.getName());
+            if (user != null && "ROLE_ADMIN".equals(user.getRole())) {
+                return "redirect:/admin/books";
+            }
+        }
+        
         Book bookById = bookService.getBookById(id);
         m.addAttribute("book", bookById);
         return "view_book";
@@ -226,7 +234,6 @@ public class HomeController {
             userByToken.setPassword(passwordEncoder.encode(password));
             userByToken.setResetToken(null);
             userService.updateUser(userByToken);
-            // session.setAttribute("succMsg", "Password change successfully");
             m.addAttribute("msg", "Password change successfully");
 
             return "message";

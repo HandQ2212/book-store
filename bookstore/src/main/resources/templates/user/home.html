@@ -7,63 +7,57 @@
 </head>
 <body>
 <section>
-    <div class="container-fluid mt-5 p-5">
+    <div class="container mt-5 p-5">
+        <div class="section-header">
+            <h2><i class="fa-solid fa-home"></i> Welcome to User Dashboard</h2>
+        </div>
         <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h3 class="text-center mb-4">Welcome to User Dashboard</h3>
-                        <div class="row">
-                            <div class="col-md-4 mt-3">
-                                <a href="/books" class="text-decoration-none">
-                                    <div class="card card-sh">
-                                        <div class="card-body text-center text-primary">
-                                            <i class="fa-solid fa-book fa-3x"></i>
-                                            <h4 class="mt-3">Browse Books</h4>
-                                            <p>Explore our collection</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-
-                            <div class="col-md-4 mt-3">
-                                <a href="/user/cart" class="text-decoration-none">
-                                    <div class="card card-sh">
-                                        <div class="card-body text-center text-success">
-                                            <i class="fa-solid fa-cart-shopping fa-3x"></i>
-                                            <h4 class="mt-3">My Cart</h4>
-                                            <p>View your shopping cart</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-
-                            <div class="col-md-4 mt-3">
-                                <a href="/user/user-orders" class="text-decoration-none">
-                                    <div class="card card-sh">
-                                        <div class="card-body text-center text-warning">
-                                            <i class="fa-solid fa-box fa-3x"></i>
-                                            <h4 class="mt-3">My Orders</h4>
-                                            <p>Track your orders</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-
-                            <div class="col-md-4 mt-3">
-                                <a href="/user/profile" class="text-decoration-none">
-                                    <div class="card card-sh">
-                                        <div class="card-body text-center text-info">
-                                            <i class="fa-solid fa-user fa-3x"></i>
-                                            <h4 class="mt-3">My Profile</h4>
-                                            <p>Manage your profile</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
+            <div class="col-md-6 mb-4">
+                <a href="/books" class="text-decoration-none">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fa-solid fa-book fa-3x" style="color: var(--secondary-color);"></i>
+                            <h4 class="mt-3 mb-2">Browse Books</h4>
+                            <p class="text-muted">Explore our extensive collection of books</p>
                         </div>
                     </div>
-                </div>
+                </a>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <a href="/user/cart" class="text-decoration-none">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fa-solid fa-cart-shopping fa-3x" style="color: var(--success-color);"></i>
+                            <h4 class="mt-3 mb-2">My Cart</h4>
+                            <p class="text-muted">View and manage your shopping cart</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <a href="/user/user-orders" class="text-decoration-none">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fa-solid fa-box fa-3x" style="color: var(--accent-color);"></i>
+                            <h4 class="mt-3 mb-2">My Orders</h4>
+                            <p class="text-muted">Track and manage your orders</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <a href="/user/profile" class="text-decoration-none">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fa-solid fa-user fa-3x" style="color: var(--primary-color);"></i>
+                            <h4 class="mt-3 mb-2">My Profile</h4>
+                            <p class="text-muted">Edit and view your profile information</p>
+                        </div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>

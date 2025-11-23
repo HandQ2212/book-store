@@ -34,6 +34,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Boolean existCategoryIgnoreCase(String name) {
+        return categoryRepository.existsByNameIgnoreCase(name);
+    }
+
+    @Override
     public Boolean deleteCategory(int id) {
         Category category = categoryRepository.findById(id).orElse(null);
 
