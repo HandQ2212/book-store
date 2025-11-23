@@ -1,0 +1,144 @@
+/* Chat Widget Styles */
+
+/* Animation */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Chat Button Pulse Animation */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
+    }
+    100% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+}
+
+.chat-button {
+    animation: pulse 2s infinite;
+}
+
+.chat-window {
+    animation: slideUp 0.3s ease;
+}
+
+.chat-message {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Scrollbar Styling */
+.chat-messages::-webkit-scrollbar,
+.user-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track,
+.user-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.chat-messages::-webkit-scrollbar-thumb,
+.user-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover,
+.user-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .chat-window {
+        width: 90% !important;
+        height: 70vh !important;
+        right: 5% !important;
+        bottom: 80px !important;
+    }
+
+    .chat-button {
+        width: 50px !important;
+        height: 50px !important;
+        bottom: 15px !important;
+        right: 15px !important;
+    }
+
+    .user-list {
+        width: 100% !important;
+        border-right: none !important;
+        border-bottom: 1px solid #e0e0e0 !important;
+        max-height: 150px !important;
+    }
+
+    .chat-body {
+        flex-direction: column !important;
+    }
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    .chat-window {
+        background: #2d2d2d !important;
+    }
+
+    .chat-messages {
+        background: #1e1e1e !important;
+    }
+
+    .user-list {
+        background: #2d2d2d !important;
+    }
+
+    .user-item {
+        border-bottom: 1px solid #444 !important;
+    }
+
+    .user-item:hover {
+        background: #3d3d3d !important;
+    }
+
+    .chat-input {
+        background: #2d2d2d !important;
+        color: white !important;
+        border-color: #444 !important;
+    }
+
+    .message-content {
+        color: white !important;
+    }
+
+    .chat-message.other .message-content {
+        background: #3d3d3d !important;
+        color: white !important;
+    }
+}
+
+/* Print - Hide chat widget when printing */
+@media print {
+    .chat-button,
+    .chat-window {
+        display: none !important;
+    }
+}
+

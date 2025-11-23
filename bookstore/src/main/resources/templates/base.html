@@ -114,6 +114,16 @@
 
 <div th:replace="${content}"></div>
 
+<!-- Chat Widget -->
+<th:block th:if="${user!=null}">
+    <th:block th:if="${user.role=='ROLE_USER'}">
+        <div th:insert="~{user/chat_simple}"></div>
+    </th:block>
+    <th:block th:if="${user.role=='ROLE_ADMIN'}">
+        <div th:insert="~{admin/chat_simple}"></div>
+    </th:block>
+</th:block>
+
 <!-- Start Footer -->
 <div class="container-fluid p-1 bg-primary text-center text-white"
      style="margin-top: 250px">

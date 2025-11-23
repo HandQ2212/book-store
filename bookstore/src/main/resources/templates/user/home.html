@@ -1,10 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
-    <title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>User Home - Bookstore</title>
 </head>
 <body>
-<h1>User Home Page</h1>
+<section>
+    <div class="container-fluid mt-5 p-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="text-center mb-4">Welcome to User Dashboard</h3>
+                        <div class="row">
+                            <div class="col-md-4 mt-3">
+                                <a href="/books" class="text-decoration-none">
+                                    <div class="card card-sh">
+                                        <div class="card-body text-center text-primary">
+                                            <i class="fa-solid fa-book fa-3x"></i>
+                                            <h4 class="mt-3">Browse Books</h4>
+                                            <p>Explore our collection</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-md-4 mt-3">
+                                <a href="/user/cart" class="text-decoration-none">
+                                    <div class="card card-sh">
+                                        <div class="card-body text-center text-success">
+                                            <i class="fa-solid fa-cart-shopping fa-3x"></i>
+                                            <h4 class="mt-3">My Cart</h4>
+                                            <p>View your shopping cart</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-md-4 mt-3">
+                                <a href="/user/user-orders" class="text-decoration-none">
+                                    <div class="card card-sh">
+                                        <div class="card-body text-center text-warning">
+                                            <i class="fa-solid fa-box fa-3x"></i>
+                                            <h4 class="mt-3">My Orders</h4>
+                                            <p>Track your orders</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="col-md-4 mt-3">
+                                <a href="/user/profile" class="text-decoration-none">
+                                    <div class="card card-sh">
+                                        <div class="card-body text-center text-info">
+                                            <i class="fa-solid fa-user fa-3x"></i>
+                                            <h4 class="mt-3">My Profile</h4>
+                                            <p>Manage your profile</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 </body>
 </html>
