@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-  <meta charset="ISO-8859-1">
+  <meta charset="UTF-8">
   <title>Insert title here</title>
 </head>
 <body>
@@ -27,7 +27,7 @@
           </div>
           <div class="card-body">
             <form action="/admin/updateBook" method="post"
-                  enctype="multipart/form-data">
+                  enctype="multipart/form-data" accept-charset="UTF-8">
               <input type="hidden" name="id" th:value="${book.id}">
               <div class="mb-3">
                 <label>Enter Title</label> <input type="text" name="title"
@@ -37,14 +37,14 @@
               <div class="mb-3">
                 <label>Enter Description</label>
                 <textarea rows="3" cols="" class="form-control"
-                          name="description">[[${book.description}]]</textarea>
+                          name="description" th:text="${book.description}"></textarea>
               </div>
               <div class="row">
                 <div class="mb-3 col">
                   <label>Category</label> <select class="form-control"
                                                   name="category">
-                  <option>[[${book.category}]]</option>
-                  <option th:each="c:${categories}">[[${c.name}]]</option>
+                  <option th:value="${book.category}" th:text="${book.category}"></option>
+                  <option th:each="c:${categories}" th:value="${c.name}" th:text="${c.name}"></option>
                 </select>
                 </div>
                 <div class="mb-3 col">
@@ -95,8 +95,7 @@
                 </div>
 
                 <div class="mt-1">
-                  <img th:src="@{'/img/book_img/'+${book.image}}"
-                       width="100px" height="100px">
+                  <img th:src="@{'/img/book_img/'+${book.image}}" width="100px" height="100px">
                 </div>
 
               </div>

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <title>Insert title here</title>
 </head>
 <body>
@@ -26,7 +26,7 @@
                     </div>
                     <div class="card-body">
                         <form action="/admin/saveCategory" method="post"
-                              enctype="multipart/form-data">
+                              enctype="multipart/form-data" accept-charset="UTF-8">
                             <div class="mb-3">
                                 <label>Enter Category</label> <input type="text" name="name"
                                                                      class="form-control">
@@ -77,11 +77,9 @@
                             <tbody>
                             <tr th:each="cat,c:${categorys}">
                                 <th scope="row">[[${c.count}]]</th>
-                                <td>[[${cat.name}]]</td>
+                                <td th:text="${cat.name}"></td>
                                 <td>[[${cat.isActive}]]</td>
-                                <td><img
-                                        th:src="@{'/img/category_img/'+${cat.imageName}}"
-                                        width="50px" height="50px"></td>
+                                <td><img th:src="@{'/img/category_img/'+${cat.imageName}}" width="50px" height="50px" loading="eager"></td>
                                 <td><a th:href="@{'/admin/loadEditCategory/'+${cat.id}}"
                                        class="btn btn-primary btn-sm"><i
                                         class="fa-solid fa-pen-to-square  fa-1x"></i> Edit </a> <a
@@ -109,7 +107,7 @@
 
                                         <li th:each="i:${#numbers.sequence(1,totalPages)}"
                                             class="page-item"
-                                            th:classappend="${pageNo+1==i}?'active':''" ]]><a
+                                            th:classappend="${pageNo+1==i}?'active':''" ><a
                                                 class="page-link"
                                                 th:href="@{'/admin/category?pageNo='+${i-1}}">[[${i}]]</a></li>
 

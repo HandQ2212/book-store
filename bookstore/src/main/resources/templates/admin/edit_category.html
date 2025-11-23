@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <title>Insert title here</title>
 </head>
 <body>
@@ -26,7 +26,7 @@
                     </div>
                     <div class="card-body">
                         <form action="/admin/updateCategory" method="post"
-                              enctype="multipart/form-data">
+                              enctype="multipart/form-data" accept-charset="UTF-8">
                             <input type="hidden" name="id" th:value="${category.id}">
                             <div class="mb-3">
                                 <label>Enter Category</label> <input type="text" name="name"
@@ -57,8 +57,7 @@
                                 <label>Upload Image</label> <input type="file" name="file"
                                                                    class="form-control">
                             </div>
-                            <img th:src="@{'/img/category_img/'+${category.imageName}}"
-                                 width="100px" height="100px">
+                            <img th:src="@{'/img/category_img/'+${category.imageName}}" width="100px" height="100px" loading="eager">
                             <button class="btn btn-primary col-md-12 mt-2">Update</button>
                         </form>
                     </div>

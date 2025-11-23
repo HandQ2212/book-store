@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-  <meta charset="ISO-8859-1">
+  <meta charset="UTF-8">
   <title>Insert title here</title>
 </head>
 <body>
@@ -23,7 +23,7 @@
         </th:block>
         <hr>
         <div class="text-center">
-          <img alt="" th:src="@{'../img/profile_img/'+${user.profileImage}}"
+          <img alt="" th:src="@{'../img/profile_img/'+${user.profileImage}}" loading="eager">
                class="border p-2"
                style="width: 110px; height: 110px; border-radius: 50%;">
         </div>
@@ -32,7 +32,7 @@
 
             <tbody>
             <form action="/admin/update-profile" method="post"
-                  enctype="multipart/form-data">
+                  enctype="multipart/form-data" accept-charset="UTF-8">
               <tr>
                 <th scope="row">Name</th>
                 <td>:</td>

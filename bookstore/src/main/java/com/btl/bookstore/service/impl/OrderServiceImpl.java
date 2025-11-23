@@ -20,6 +20,7 @@ import com.btl.bookstore.model.BookOrder;
 import com.btl.bookstore.model.UserDtls;
 import com.btl.bookstore.repository.CartRepository;
 import com.btl.bookstore.repository.BookOrderRepository;
+import com.btl.bookstore.repository.UserRepository;
 import com.btl.bookstore.service.OrderService;
 import com.btl.bookstore.util.CommonUtil;
 import com.btl.bookstore.util.OrderStatus;
@@ -36,9 +37,13 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private CommonUtil commonUtil;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public void saveOrder(Integer userid, OrderRequest orderRequest) throws Exception {
 
+        UserDtls user = userRepository.findById(userid).orElse(null);
         List<Cart> carts = cartRepository.findByUserId(userid);
 
         for (Cart cart : carts) {
@@ -58,14 +63,13 @@ public class OrderServiceImpl implements OrderService {
             order.setPaymentType(orderRequest.getPaymentType());
 
             OrderAddress address = new OrderAddress();
-            address.setFirstName(orderRequest.getFirstName());
-            address.setLastName(orderRequest.getLastName());
-            address.setEmail(orderRequest.getEmail());
-            address.setMobileNo(orderRequest.getMobileNo());
-            address.setAddress(orderRequest.getAddress());
-            address.setCity(orderRequest.getCity());
-            address.setState(orderRequest.getState());
-            address.setPincode(orderRequest.getPincode());
+            // Auto-fill from user info
+            address.setFirstName(user.getName());
+            address.setLastName("");
+            address.setEmail(user.getEmail());
+            address.setMobileNo(user.getMobileNumber());
+            address.setAddress(user.getAddress() != null ? user.getAddress() : orderRequest.getAddress());
+            address.setCity(user.getCity() != null ? user.getCity() : orderRequest.getCity());
 
             order.setOrderAddress(address);
 

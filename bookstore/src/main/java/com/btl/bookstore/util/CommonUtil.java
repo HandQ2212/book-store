@@ -62,7 +62,8 @@ public class CommonUtil {
                 + "<p>Name : [[bookName]]</p>"
                 + "<p>Category : [[category]]</p>"
                 + "<p>Quantity : [[quantity]]</p>"
-                + "<p>Price : [[price]]</p>"
+                + "<p>Unit Price (after discount) : [[price]]</p>"
+                + "<p><b>Total Price : [[totalPrice]]</b></p>"
                 + "<p>Payment Type : [[paymentType]]</p>";
 
         MimeMessage message = mailSender.createMimeMessage();
@@ -71,12 +72,15 @@ public class CommonUtil {
         helper.setFrom("daspabitra55@gmail.com", "Shooping Cart");
         helper.setTo(order.getOrderAddress().getEmail());
 
+        Double totalPrice = order.getPrice() * order.getQuantity();
+        
         msg=msg.replace("[[name]]",order.getOrderAddress().getFirstName());
         msg=msg.replace("[[orderStatus]]",status);
         msg=msg.replace("[[bookName]]", order.getBook().getTitle());
         msg=msg.replace("[[category]]", order.getBook().getCategory());
         msg=msg.replace("[[quantity]]", order.getQuantity().toString());
         msg=msg.replace("[[price]]", order.getPrice().toString());
+        msg=msg.replace("[[totalPrice]]", totalPrice.toString());
         msg=msg.replace("[[paymentType]]", order.getPaymentType());
 
         helper.setSubject("Book Order Status");

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <title>Insert title here</title>
 </head>
 <body>
@@ -62,15 +62,14 @@
                                     [[${orderDtls.orderAddress.email}]] <br> Mobno:
                                     [[${orderDtls.orderAddress.mobileNo}]] <br> Address :
                                     [[${orderDtls.orderAddress.address}]] <br> City :
-                                    [[${orderDtls.orderAddress.city}]] <br> State :
-                                    [[${orderDtls.orderAddress.state}]],
-                                    [[${orderDtls.orderAddress.pincode}]]
+                                    [[${orderDtls.orderAddress.city}]]
 
 
 
                                 </td>
                                 <td>[[${orderDtls.orderDate}]]</td>
-                                <td>[[${orderDtls.book.title}]]</td>
+                                <td th:if="${orderDtls.book != null}">[[${orderDtls.book.title}]]</td>
+                                <td th:unless="${orderDtls.book != null}"><span class="text-muted">(Deleted)</span></td>
                                 <td>Quantity : [[${orderDtls.quantity}]] <br>Price :
                                     [[${orderDtls.price}]] <br>Total Price
                                     :[[${orderDtls.quantity * orderDtls.price}]]
@@ -122,14 +121,14 @@
                                 [[${o.orderAddress.email}]] <br> Mobno:
                                 [[${o.orderAddress.mobileNo}]] <br> Address :
                                 [[${o.orderAddress.address}]] <br> City :
-                                [[${o.orderAddress.city}]] <br> State :
-                                [[${o.orderAddress.state}]], [[${o.orderAddress.pincode}]]
+                                [[${o.orderAddress.city}]]
 
 
 
                             </td>
                             <td>[[${o.orderDate}]]</td>
-                            <td>[[${o.book.title}]]</td>
+                            <td th:if="${o.book != null}">[[${o.book.title}]]</td>
+                            <td th:unless="${o.book != null}"><span class="text-muted">(Deleted)</span></td>
                             <td>Quantity : [[${o.quantity}]] <br>Price :
                                 [[${o.price}]] <br>Total Price :[[${o.quantity *
                                 o.price}]]

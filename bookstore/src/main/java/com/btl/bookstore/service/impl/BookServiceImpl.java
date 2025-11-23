@@ -1,7 +1,10 @@
 package com.btl.bookstore.service.impl;
 
 import com.btl.bookstore.model.Book;
+import com.btl.bookstore.model.BookOrder;
 import com.btl.bookstore.repository.BookRepository;
+import com.btl.bookstore.repository.BookOrderRepository;
+import com.btl.bookstore.repository.CartRepository;
 import com.btl.bookstore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -25,6 +28,12 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private BookOrderRepository bookOrderRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
+
     @Override
     public Book saveBook(Book book) {
         return bookRepository.save(book);
@@ -46,6 +55,17 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id).orElse(null);
 
         if (!ObjectUtils.isEmpty(book)) {
+            // Set book = null for all BookOrders related to this book
+            List<BookOrder> bookOrders = bookOrderRepository.findByBookId(id);
+            for (BookOrder order : bookOrders) {
+                order.setBook(null);
+                bookOrderRepository.save(order);
+            }
+            
+            // Delete all Cart entries related to this book (pending items only)
+            cartRepository.deleteByBookId(id);
+            
+            // Delete the book (BookOrders will remain as historical records with book = null)
             bookRepository.delete(book);
             return true;
         }
@@ -114,13 +134,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> searchBook(String ch) {
-        return bookRepository.findByTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch, ch);
+        return bookRepository.findByTitleContainingIgnoreCase(ch);
     }
 
     @Override
     public Page<Book> searchBookPagination(Integer pageNo, Integer pageSize, String ch) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return bookRepository.findByTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch, ch, pageable);
+        return bookRepository.findByTitleContainingIgnoreCase(ch, pageable);
     }
 
     @Override
@@ -132,7 +152,7 @@ public class BookServiceImpl implements BookService {
         if (ObjectUtils.isEmpty(category)) {
             pageBook = bookRepository.findByIsActiveTrue(pageable);
         } else {
-            pageBook = bookRepository.findByCategory(pageable, category);
+            pageBook = bookRepository.findByIsActiveTrueAndCategory(category, pageable);
         }
         return pageBook;
     }
@@ -142,13 +162,11 @@ public class BookServiceImpl implements BookService {
         Page<Book> pageBook = null;
         Pageable pageable = PageRequest.of(pageNo, pageSize);
 
-        pageBook = bookRepository.findByisActiveTrueAndTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch, ch, pageable);
-
-//        if (ObjectUtils.isEmpty(category)) {
-//            pageBook = bookRepository.findByIsActiveTrue(pageable);
-//        } else {
-//            pageBook = bookRepository.findByCategory(pageable, category);
-//        }
+        if (ObjectUtils.isEmpty(category)) {
+            pageBook = bookRepository.findByIsActiveTrueAndTitleContainingIgnoreCase(ch, pageable);
+        } else {
+            pageBook = bookRepository.findByIsActiveTrueAndCategoryAndTitleContainingIgnoreCase(category, ch, pageable);
+        }
         return pageBook;
     }
 }

@@ -15,11 +15,13 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     List<Book> findByCategory(String category);
 
-    List<Book> findByTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(String ch, String ch2);
+    Page<Book> findByIsActiveTrueAndCategory(String category, Pageable pageable);
 
-    Page<Book> findByCategory(Pageable pageable, String category);
+    List<Book> findByTitleContainingIgnoreCase(String ch);
 
-    Page<Book> findByTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(String ch, String ch2, Pageable pageable);
+    Page<Book> findByTitleContainingIgnoreCase(String ch, Pageable pageable);
 
-    Page<Book> findByisActiveTrueAndTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(String ch, String ch2, Pageable pageable);
+    Page<Book> findByIsActiveTrueAndTitleContainingIgnoreCase(String ch, Pageable pageable);
+
+    Page<Book> findByIsActiveTrueAndCategoryAndTitleContainingIgnoreCase(String category, String ch, Pageable pageable);
 }

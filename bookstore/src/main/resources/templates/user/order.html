@@ -2,61 +2,54 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <title>Insert title here</title>
 </head>
 <body>
 <section>
 
     <div class="container mt-5 p-5">
-        <form action="/user/save-order" method="post" id="orders" novalidate>
+        <form action="/user/save-order" method="post" id="orders" novalidate accept-charset="UTF-8">
             <div class="row">
 
                 <div class="col-md-6">
 
-
+                    <p class="text-center fs-4">Billing Address</p>
+                    <hr>
                     <div class="mb-3 row">
-                        <p class="text-center fs-4">Billing Address</p>
-                        <hr>
                         <div class="col p-1">
-                            <label>First Name</label> <input type="text" name="firstName" required
-                                                             class="form-control mt-1">
+                            <label>Name</label> 
+                            <input type="text" name="firstName" th:value="${user.name}"
+                                   class="form-control mt-1" readonly>
+                            <input type="hidden" name="firstName" th:value="${user.name}">
                         </div>
                         <div class="col p-1">
-                            <label>Last Name</label> <input type="text" name="lastName" required
-                                                            class="form-control mt-1">
+                            <label>Email</label> 
+                            <input type="email" name="email" th:value="${user.email}"
+                                   class="form-control col" readonly>
+                            <input type="hidden" name="email" th:value="${user.email}">
                         </div>
                     </div>
 
                     <div class="mb-3 row">
                         <div class="col p-1">
-                            <label>Email</label> <input type="email" name="email" required
-                                                        class="form-control col">
-                        </div>
-                        <div class="col p-1">
-                            <label>Mobile Number</label> <input type="text" name="mobileNo" required
-                                                                class="form-control col ms-2">
+                            <label>Mobile Number</label> 
+                            <input type="text" name="mobileNo" th:value="${user.mobileNumber}"
+                                   class="form-control col" readonly>
+                            <input type="hidden" name="mobileNo" th:value="${user.mobileNumber}">
                         </div>
                     </div>
 
                     <div class="mb-3 row">
                         <div class="col p-1">
-                            <label>Address</label> <input type="text" name="address" required
-                                                          class="form-control col">
+                            <label>Address</label> 
+                            <input type="text" name="address" th:value="${user.address}"
+                                   class="form-control col">
                         </div>
                         <div class="col p-1">
-                            <label>City</label> <input type="text" name="city" required
-                                                       class="form-control col ms-2">
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <div class="col p-1">
-                            <label>State</label> <input type="text" name="state" required
-                                                        class="form-control col">
-                        </div>
-                        <div class="col p-1">
-                            <label>Pincode</label> <input type="number" name="pincode" required
-                                                          class="form-control col ms-2">
+                            <label>City</label> 
+                            <input type="text" name="city" th:value="${user.city}"
+                                   class="form-control col ms-2">
                         </div>
                     </div>
                     <!-- </form> -->

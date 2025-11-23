@@ -19,10 +19,10 @@
 </head>
 <body>
 <!-- Start Navbar  -->
-<nav class="navbar navbar-expand-lg  bg-primary fixed-top navbar-dark">
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#"><i
-                class="fa-solid fa-cart-shopping"></i> Book Store</a>
+        <a class="navbar-brand" href="/"><i
+                class="fa-solid fa-book"></i> BookStore</a>
         <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -115,10 +115,11 @@
 <div th:replace="${content}"></div>
 
 <!-- Start Footer -->
-<div class="container-fluid p-1 bg-primary text-center text-white"
-     style="margin-top: 250px">
-    <p>book.com</p>
-</div>
+<footer>
+    <div class="container-fluid">
+        <p>&copy; 2025 BookStore. All rights reserved.</p>
+    </div>
+</footer>
 <!-- End Footer  -->
 
 <!-- Jquery Validation Library  -->

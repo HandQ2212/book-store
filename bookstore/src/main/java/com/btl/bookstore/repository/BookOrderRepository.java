@@ -9,4 +9,6 @@ public interface BookOrderRepository extends JpaRepository<BookOrder, Integer> {
     List<BookOrder> findByUserId(Integer userId);
 
     BookOrder findByOrderId(String orderId);
+    
+    List<BookOrder> findByBookId(Integer bookId);
 }

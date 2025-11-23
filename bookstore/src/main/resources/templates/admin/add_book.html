@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <title>Insert title here</title>
 </head>
 <body>
@@ -27,7 +27,7 @@
                     </div>
                     <div class="card-body">
                         <form action="/admin/saveBook" method="post"
-                              enctype="multipart/form-data">
+                              enctype="multipart/form-data" accept-charset="UTF-8">
                             <div class="mb-3">
                                 <label>Enter Title</label> <input type="text" name="title"
                                                                   class="form-control">
@@ -43,7 +43,7 @@
                                 <label>Category</label> <select class="form-control"
                                                                 name="category">
                                 <option>--select--</option>
-                                <option th:each="c:${categories}">[[${c.name}]]</option>
+                                <option th:each="c:${categories}" th:value="${c.name}" th:text="${c.name}"></option>
                             </select>
                             </div>
 

@@ -104,7 +104,7 @@ public class AdminController {
         String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
         category.setImageName(imageName);
 
-        Boolean existCategory = categoryService.existCategory(category.getName());
+        Boolean existCategory = categoryService.existCategoryIgnoreCase(category.getName());
 
         if (existCategory) {
             session.setAttribute("errorMsg", "Category Name already exists");

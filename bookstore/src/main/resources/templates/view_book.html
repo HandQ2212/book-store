@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <title>Insert title here</title>
 </head>
 <body>
@@ -23,15 +24,14 @@
 
                 </th:block>
                 <div class="col-md-6 text-end">
-                    <img alt="" th:src="@{'/img/book_img/'+${book.image}}" width="300px"
-                         height="250px">
+                    <img alt="" th:src="@{'/img/book_img/'+${book.image}}" width="300px" height="250px">
                 </div>
 
                 <div class="col-md-6">
 
-                    <p class="fs-3">[[${book.title}]]</p>
+                    <p class="fs-3" th:text="${book.title}"></p>
                     <p>
-                        <span class="fw-bold">Description : </span><br>[[${book.description}]]
+                        <span class="fw-bold">Description : </span><br><span th:text="${book.description}"></span>
                     </p>
                     <p>
                         <span class="fw-bold"> Book Details: </span> <br> Status
@@ -45,7 +45,7 @@
                         </th:block>
 
 
-                        <br> Category: [[${book.category}]]<br> Policy : 7
+                        <br> Category: <span th:text="${book.category}"></span><br> Policy : 7
                         Days Replacement & Return
                     </p>
                     <p class="fs-5 fw-bold">
@@ -72,17 +72,18 @@
                     </div>
 
                     <th:block th:if="${book.stock>0}">
-                        <th:block th:if="${user==null}">
-                            <a href="/signin" class="btn btn-danger col-md-12">Add To
-                                Cart</a>
-                        </th:block>
+                        <th:block sec:authorize="!hasRole('ADMIN')">
+                            <th:block th:if="${user==null}">
+                                <a href="/signin" class="btn btn-danger col-md-12">Add To
+                                    Cart</a>
+                            </th:block>
 
-                        <th:block th:unless="${user==null}">
-                            <a
-                                    th:href="@{'/user/addCart?pid='+${book.id}+'&uid='+${user.id}}"
-                                    class="btn btn-danger col-md-12">Add To Cart</a>
+                            <th:block th:unless="${user==null}">
+                                <a
+                                        th:href="@{'/user/addCart?pid='+${book.id}+'&uid='+${user.id}}"
+                                        class="btn btn-danger col-md-12">Add To Cart</a>
+                            </th:block>
                         </th:block>
-
                     </th:block>
 
                     <th:block th:unless="${book.stock>0}">
