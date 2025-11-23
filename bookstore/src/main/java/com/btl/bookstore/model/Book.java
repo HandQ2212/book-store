@@ -27,6 +27,7 @@ public class Book {
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String description;
 
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String category;
 
     private Double price;
