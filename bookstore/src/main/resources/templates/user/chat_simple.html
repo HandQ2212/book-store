@@ -3,157 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>User Chat</title>
+    <link rel="stylesheet" th:href="@{/css/chat_user.css}">
 </head>
 <body>
 <!-- User Chat Widget -->
-<button style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); display: flex; align-items: center; justify-content: center; z-index: 9998;" id="chatButtonUser">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width: 28px; height: 28px; fill: white;">
+<button class="chat-button" id="chatButton">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
     </svg>
-    <span style="position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 50%; width: 24px; height: 24px; display: none; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;" id="chatBadgeUser">0</span>
+    <span class="chat-badge" id="chatBadge">0</span>
 </button>
 
-<div style="position: fixed; bottom: 90px; right: 20px; width: 380px; height: 500px; background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); display: none; flex-direction: column; z-index: 9999; overflow: hidden;" id="chatWindowUser">
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin: 0; font-size: 18px; font-weight: 600;">Chat với Admin</h3>
-        <button style="background: none; border: none; color: white; font-size: 28px; cursor: pointer;" id="chatCloseUser">&times;</button>
+<div class="chat-window" id="chatWindow">
+    <div class="chat-header">
+        <h3>Chat với Admin</h3>
+        <button class="chat-close" id="chatClose">&times;</button>
     </div>
-    <div style="flex: 1; overflow-y: auto; padding: 16px; background: #f5f5f5;" id="chatMessagesUser">
-        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999; font-size: 14px;">Bắt đầu cuộc trò chuyện...</div>
+    <div class="chat-messages" id="chatMessages">
+        <div class="empty-chat">Bắt đầu cuộc trò chuyện...</div>
     </div>
-    <div style="padding: 16px; background: white; border-top: 1px solid #e0e0e0; display: flex; gap: 10px;">
-        <input type="text" placeholder="Nhập tin nhắn..." style="flex: 1; padding: 10px 14px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px;" id="chatInputUser">
-        <button style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 24px; border-radius: 20px; cursor: pointer; font-weight: 600;" id="chatSendUser">Gửi</button>
+    <div class="chat-input-container">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Nhập tin nhắn...">
+        <button class="chat-send-btn" id="chatSend">Gửi</button>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script th:src="@{/js/chat_user.js}"></script>
 <script th:inline="javascript">
-(function() {
-    const currentUserId = /*[[${user != null ? user.id : null}]]*/ null;
-    if (!currentUserId) return;
-
-    let stompClient = null;
-    let currentAdminId = null;
-    let currentChatRoomId = null;
-
-    const chatButton = document.getElementById('chatButtonUser');
-    const chatWindow = document.getElementById('chatWindowUser');
-    const chatClose = document.getElementById('chatCloseUser');
-    const chatMessages = document.getElementById('chatMessagesUser');
-    const chatInput = document.getElementById('chatInputUser');
-    const chatSend = document.getElementById('chatSendUser');
-    const chatBadge = document.getElementById('chatBadgeUser');
-
-    chatButton.addEventListener('click', function() {
-        chatWindow.style.display = chatWindow.style.display === 'none' || chatWindow.style.display === '' ? 'flex' : 'none';
-        if (chatWindow.style.display === 'flex') loadAdminAndMessages();
-    });
-
-    chatClose.addEventListener('click', function() {
-        chatWindow.style.display = 'none';
-    });
-
-    chatSend.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') sendMessage();
-    });
-
-    function sendMessage() {
-        const content = chatInput.value.trim();
-        if (content && currentAdminId && stompClient) {
-            stompClient.send("/app/chat", {}, JSON.stringify({
-                sender: { id: currentUserId },
-                receiver: { id: currentAdminId },
-                content: content,
-                chatRoomId: currentChatRoomId
-            }));
-            chatInput.value = '';
-            addMessageToUI({ content: content, timestamp: new Date().toLocaleString('vi-VN'), isOwn: true });
-        }
+    const userId = /*[[${user != null ? user.id : null}]]*/ null;
+    if (userId) {
+        initChat(userId);
     }
-
-    function addMessageToUI(message) {
-        const empty = chatMessages.querySelector('div[style*="height: 100%"]');
-        if (empty) empty.remove();
-
-        const div = document.createElement('div');
-        div.style.cssText = 'margin-bottom: 12px; display: flex; flex-direction: column; align-items: ' + (message.isOwn ? 'flex-end' : 'flex-start');
-        div.innerHTML = (!message.isOwn ? '<div style="font-size: 12px; color: #666; margin-bottom: 4px;">' + (message.senderName || 'Admin') + '</div>' : '') +
-            '<div style="max-width: 70%; padding: 10px 14px; border-radius: 12px; background: ' + (message.isOwn ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'white') + '; color: ' + (message.isOwn ? 'white' : '#333') + ';">' + escapeHtml(message.content) + '</div>' +
-            '<div style="font-size: 11px; color: #999; margin-top: 4px;">' + message.timestamp + '</div>';
-        chatMessages.appendChild(div);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function loadAdminAndMessages() {
-        fetch('/chat/admin-list')
-            .then(r => r.json())
-            .then(admins => {
-                if (admins.length > 0) {
-                    currentAdminId = admins[0].id;
-                    currentChatRoomId = (currentUserId < currentAdminId ? currentUserId + '_' + currentAdminId : currentAdminId + '_' + currentUserId);
-                    loadMessages();
-                }
-            })
-            .catch(e => console.error(e));
-    }
-
-    function loadMessages() {
-        if (!currentChatRoomId) return;
-        fetch('/chat/messages/' + currentChatRoomId)
-            .then(r => r.json())
-            .then(messages => {
-                chatMessages.innerHTML = messages.length === 0 ?
-                    '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999; font-size: 14px;">Bắt đầu cuộc trò chuyện...</div>' : '';
-                messages.forEach(m => addMessageToUI(m));
-                updateUnreadCount();
-            })
-            .catch(e => console.error(e));
-    }
-
-    function updateUnreadCount() {
-        fetch('/chat/unread-count')
-            .then(r => r.json())
-            .then(data => {
-                chatBadge.textContent = data.count;
-                chatBadge.style.display = data.count > 0 ? 'flex' : 'none';
-            })
-            .catch(e => console.error(e));
-    }
-
-    function escapeHtml(text) {
-        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-        return text.replace(/[&<>"']/g, m => map[m]);
-    }
-
-    function connect() {
-        const socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, function() {
-            stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function(message) {
-                const notification = JSON.parse(message.body);
-                if (chatWindow.style.display === 'flex') {
-                    addMessageToUI({
-                        content: notification.content,
-                        timestamp: notification.timestamp,
-                        senderName: notification.senderName,
-                        isOwn: false
-                    });
-                } else {
-                    updateUnreadCount();
-                }
-            });
-        }, function(error) {
-            console.error('WebSocket error:', error);
-        });
-    }
-
-    connect();
-    updateUnreadCount();
-    setInterval(updateUnreadCount, 30000);
-})();
 </script>
 </body>
 </html>
