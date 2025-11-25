@@ -2,148 +2,133 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <title>Insert title here</title>
 </head>
 <body>
 <section>
-    <div class="container-fluid mt-5 p-5 bg-light">
+    <div class="container mt-5 mb-5">
         <div class="row">
-            <div class="col-md-10 offset-md-1 ">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="card shadow-md">
+                    <div class="card-header bg-gradient-primary">
+                        <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>My Profile</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Messages -->
+                        <th:block th:if="${session.succMsg}">
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>[[${session.succMsg}]]
+                                <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+                            </div>
+                        </th:block>
 
-                <p class="fs-3 text-center">My Profile</p>
-                <th:block th:if="${session.succMsg}">
-                    <p class="text-success fw-bold  text-center">[[${session.succMsg}]]</p>
-                    <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
-                </th:block>
+                        <th:block th:if="${session.errorMsg}">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>[[${session.errorMsg}]]
+                                <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
+                            </div>
+                        </th:block>
 
-                <th:block th:if="${session.errorMsg}">
-                    <p class="text-danger fw-bold  text-center">[[${session.errorMsg}]]</p>
-                    <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
-                </th:block>
-                <hr>
-                <div class="text-center">
-                    <img alt="" th:src="@{'../img/profile_img/'+${user.profileImage}}"
-                         class="border p-2"
-                         style="width: 110px; height: 110px; border-radius: 50%;">
-                </div>
-                <div class="col-md-8 offset-md-2 mt-4">
-                    <table class="table table-borderless">
+                        <!-- Profile Image -->
+                        <div class="text-center mb-4">
+                            <img alt="Profile" th:src="@{'../img/profile_img/'+${user.profileImage}}"
+                                 class="rounded-circle border-3"
+                                 style="width: 120px; height: 120px; object-fit: cover; border: 4px solid var(--secondary-color);">
+                        </div>
 
-                        <tbody>
-                        <form action="/user/update-profile" method="post"
-                              enctype="multipart/form-data">
-                            <tr>
-                                <th scope="row">Name</th>
-                                <td>:</td>
-                                <td><input type="text" name="name" class="form-control"
-                                           th:value="${user.name}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Mobile Number</th>
-                                <td>:</td>
-                                <td><input type="text" name="mobileNumber"
-                                           class="form-control" th:value="${user.mobileNumber}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Email</th>
-                                <td>:</td>
-                                <td><input type="text" name="" class="form-control"
-                                           readonly th:value="${user.email}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Address</th>
-                                <td>:</td>
-                                <td><input type="text" name="address" class="form-control"
-                                           th:value="${user.address}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">City</th>
-                                <td>:</td>
-                                <td><input type="text" name="city" class="form-control"
-                                           th:value="${user.city}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">State</th>
-                                <td>:</td>
-                                <td><input type="text" name="state" class="form-control"
-                                           th:value="${user.state}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Pincode</th>
-                                <td>:</td>
-                                <td><input type="text" name="pincode" class="form-control"
-                                           th:value="${user.pincode}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Image</th>
-                                <td>:</td>
-                                <td><input type="file" name="img" class="form-control"
-                                           value=""></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Role</th>
-                                <td>:</td>
-                                <td><input type="text" name="" class="form-control"
-                                           readonly th:value="${user.role}"></td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Account Status</th>
-                                <td>:</td>
-                                <td><input type="text" name="" class="form-control"
-                                           readonly th:value="${user.isEnable}"> <input
-                                        type="hidden" th:value="${user.id}" name="id"></td>
-                            </tr>
+                        <!-- Form -->
+                        <form action="/user/update-profile" method="post" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-600"><i class="fas fa-user text-secondary me-2"></i>Name</label>
+                                    <input type="text" name="name" class="form-control" th:value="${user.name}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-600"><i class="fas fa-phone text-secondary me-2"></i>Mobile Number</label>
+                                    <input type="text" name="mobileNumber" class="form-control" th:value="${user.mobileNumber}">
+                                </div>
+                            </div>
 
-                            <tr>
-                                <td></td>
-                                <td class="text-center">
-                                    <button class="btn btn-sm bg-primary text-light">Update</button>
-                                </td>
-                            </tr>
+                            <div class="mb-3">
+                                <label class="form-label fw-600"><i class="fas fa-envelope text-secondary me-2"></i>Email</label>
+                                <input type="email" name="email" class="form-control" readonly th:value="${user.email}">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-600"><i class="fas fa-map-marker-alt text-secondary me-2"></i>Address</label>
+                                <input type="text" name="address" class="form-control" th:value="${user.address}">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-600"><i class="fas fa-city text-secondary me-2"></i>City</label>
+                                    <input type="text" name="city" class="form-control" th:value="${user.city}">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-600"><i class="fas fa-map text-secondary me-2"></i>State</label>
+                                    <input type="text" name="state" class="form-control" th:value="${user.state}">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label fw-600"><i class="fas fa-mailbox text-secondary me-2"></i>Pincode</label>
+                                    <input type="text" name="pincode" class="form-control" th:value="${user.pincode}">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-600"><i class="fas fa-image text-secondary me-2"></i>Profile Image</label>
+                                <input type="file" name="img" class="form-control">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-600"><i class="fas fa-user-tag text-secondary me-2"></i>Role</label>
+                                    <input type="text" name="role" class="form-control" readonly th:value="${user.role}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-600"><i class="fas fa-check-circle text-secondary me-2"></i>Account Status</label>
+                                    <input type="text" name="status" class="form-control" readonly th:value="${user.isEnable}">
+                                    <input type="hidden" th:value="${user.id}" name="id">
+                                </div>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save me-2"></i>Update Profile</button>
+                            </div>
                         </form>
-                        </tbody>
-                    </table>
-
+                    </div>
                 </div>
-
             </div>
-            <hr>
-            <div class="col-md-10 offset-md-1 mt-1">
-                <div class="row">
-                    <p class="text-center fs-3">Change Password</p>
-                    <div class="col-md-6 offset-md-3">
-                        <table class="table table-borderless">
+        </div>
 
-                            <tbody>
-                            <form action="/user/change-password" method="post">
-                                <tr>
-                                    <th scope="row">Current Password</th>
+        <!-- Change Password Card -->
+        <div class="row mt-5">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="card shadow-md">
+                    <div class="card-header bg-gradient-secondary">
+                        <h5 class="mb-0"><i class="fas fa-lock me-2"></i>Change Password</h5>
+                    </div>
+                    <div class="card-body">
+                        <form action="/user/change-password" method="post">
+                            <div class="mb-3">
+                                <label class="form-label fw-600"><i class="fas fa-lock-open text-secondary me-2"></i>Current Password</label>
+                                <input type="password" name="currentPassword" class="form-control" required>
+                            </div>
 
-                                    <td><input type="text" name="currentPassword" class="form-control"></td>
-                                </tr>
+                            <div class="mb-3">
+                                <label class="form-label fw-600"><i class="fas fa-key text-secondary me-2"></i>New Password</label>
+                                <input type="password" name="newPassword" class="form-control" required>
+                            </div>
 
-                                <tr>
-                                    <th scope="row">New Password</th>
+                            <div class="mb-3">
+                                <label class="form-label fw-600"><i class="fas fa-key text-secondary me-2"></i>Confirm Password</label>
+                                <input type="password" name="confirmPassword" class="form-control" required>
+                            </div>
 
-                                    <td><input type="text" name="newPassword" class="form-control"></td>
-                                </tr>
-
-                                <tr>
-                                    <th scope="row">Confirm Password</th>
-
-                                    <td><input type="text" name="confirmPassword" class="form-control"></td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm bg-primary text-light col-md-4">Update</button>
-                                    </td>
-
-                                </tr>
-                            </form>
-                            </tbody>
-                        </table>
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-secondary btn-lg"><i class="fas fa-edit me-2"></i>Change Password</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

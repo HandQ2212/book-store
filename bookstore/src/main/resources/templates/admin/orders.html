@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <title>Insert title here</title>
 </head>
 <body>
@@ -70,7 +70,8 @@
 
                                 </td>
                                 <td>[[${orderDtls.orderDate}]]</td>
-                                <td>[[${orderDtls.book.title}]]</td>
+                                <td th:if="${orderDtls.book != null}">[[${orderDtls.book.title}]]</td>
+                                <td th:unless="${orderDtls.book != null}"><span class="text-danger">Book Deleted</span></td>
                                 <td>Quantity : [[${orderDtls.quantity}]] <br>Price :
                                     [[${orderDtls.price}]] <br>Total Price
                                     :[[${orderDtls.quantity * orderDtls.price}]]
@@ -129,7 +130,8 @@
 
                             </td>
                             <td>[[${o.orderDate}]]</td>
-                            <td>[[${o.book.title}]]</td>
+                            <td th:if="${o.book != null}">[[${o.book.title}]]</td>
+                            <td th:unless="${o.book != null}"><span class="text-danger">Book Deleted</span></td>
                             <td>Quantity : [[${o.quantity}]] <br>Price :
                                 [[${o.price}]] <br>Total Price :[[${o.quantity *
                                 o.price}]]

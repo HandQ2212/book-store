@@ -2,57 +2,56 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::layout(~{::section})}">
 <head>
-    <meta charset="ISO-8859-1">
-    <title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>Bookstore - Login</title>
 </head>
 <body>
 <section>
-    <div class="container mt-5 p-5">
-        <div class="row">
-            <div class="col-md-6 p-5">
-                <img alt="" src="img/ecom.png" width="100%" height="400px">
+    <div class="container mt-5 mb-5">
+        <div class="row g-0 align-items-center">
+            <div class="col-md-5 d-none d-md-block">
+                <img alt="bookstore" src="/img/ecom.png" class="w-100 h-100" style="object-fit: cover; border-radius: 12px 0 0 12px;" loading="eager">
             </div>
-            <div class="col-md-6 mt-3 p-5">
-                <div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
-                    <div class="card-header">
-                        <p class="fs-4 text-center">Login</p>
-                        <div th:if="${param.error}"
-                             class="alert alert-danger text-center">
-
-                            <th:block
-                                    th:if="${session.SPRING_SECURITY_LAST_EXCEPTION!=null}">
+            <div class="col-md-7 p-4">
+                <div class="card shadow-lg" style="border: none; border-radius: 12px;">
+                    <div class="card-header text-center" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border-radius: 12px 12px 0 0;">
+                        <h2 class="mb-0" style="color: white;"><i class="fa-solid fa-right-to-bracket"></i> Login</h2>
+                        <p class="small mt-2" style="color: white;">Welcome back to our bookstore</p>
+                    </div>
+                    <th:block th:if="${param.error}">
+                        <div class="alert alert-danger m-3" role="alert">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <th:block th:if="${session.SPRING_SECURITY_LAST_EXCEPTION!=null}">
                                 [[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]
                             </th:block>
                         </div>
-                        <div th:if="${param.logout}" class="alert alert-success">
-                            Logout Success</div>
-                    </div>
+                    </th:block>
+                    <th:block th:if="${param.logout}">
+                        <div class="alert alert-success m-3" role="alert">
+                            <i class="fa-solid fa-check-circle"></i> Logout successful
+                        </div>
+                    </th:block>
                     <div class="card-body">
-                        <form action="/login" method="post">
+                        <form action="/login" method="post" novalidate accept-charset="UTF-8">
                             <div class="mb-3">
-                                <label class="form-label">Email</label> <input required
-                                                                               class="form-control" name="username" type="email">
+                                <label class="form-label"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                                <input required id="email" class="form-control" name="username" type="email" placeholder="Enter your email">
                             </div>
-
                             <div class="mb-3">
-                                <label class="form-label">Password</label> <input required
-                                                                                  class="form-control" name="password" type="password">
+                                <label class="form-label"><i class="fa-solid fa-lock"></i> Password</label>
+                                <input required id="password" class="form-control" name="password" type="password" placeholder="Enter your password">
                             </div>
-                            <button type="submit"
-                                    class="btn bg-primary text-white col-md-12">Login</button>
+                            <button type="submit" class="btn btn-primary w-100 mb-3">Sign In</button>
                         </form>
                     </div>
-
-                    <div class="card-footer text-center">
-                        <a href="/forgot-password" class="text-decoration-none">Forgot Password</a><br>
-                        Don't have an account ? <a href="register" class="text-decoration-none">Create
-                        one </a>
+                    <div class="card-footer text-center" style="background-color: #f8f9fa; border-radius: 0 0 12px 12px;">
+                        <p class="mb-2"><a href="/forgot-password" class="text-decoration-none" style="color: var(--secondary-color);"><i class="fa-solid fa-key"></i> Forgot Password?</a></p>
+                        <p class="text-muted">Don't have an account? <a href="/register" class="fw-bold" style="color: var(--secondary-color);">Create one</a></p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </section>
 </body>
 </html>

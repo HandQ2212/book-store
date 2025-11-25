@@ -18,8 +18,10 @@ import com.btl.bookstore.model.OrderAddress;
 import com.btl.bookstore.model.OrderRequest;
 import com.btl.bookstore.model.BookOrder;
 import com.btl.bookstore.model.UserDtls;
+import com.btl.bookstore.model.Book;
 import com.btl.bookstore.repository.CartRepository;
 import com.btl.bookstore.repository.BookOrderRepository;
+import com.btl.bookstore.repository.BookRepository;
 import com.btl.bookstore.service.OrderService;
 import com.btl.bookstore.util.CommonUtil;
 import com.btl.bookstore.util.OrderStatus;
@@ -32,6 +34,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
 
     @Autowired
     private CommonUtil commonUtil;
@@ -70,6 +75,13 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderAddress(address);
 
             BookOrder saveOrder = orderRepository.save(order);
+            
+            // Reduce stock after successful order
+            Book book = cart.getBook();
+            int newStock = book.getStock() - cart.getQuantity();
+            book.setStock(newStock);
+            bookRepository.save(book);
+            
             resetCart(cart.getUser());
             commonUtil.sendMailForBookOrder(saveOrder, "success");
         }

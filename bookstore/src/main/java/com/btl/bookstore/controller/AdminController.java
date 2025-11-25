@@ -104,7 +104,7 @@ public class AdminController {
         String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
         category.setImageName(imageName);
 
-        Boolean existCategory = categoryService.existCategory(category.getName());
+        Boolean existCategory = categoryService.existCategoryIgnoreCase(category.getName());
 
         if (existCategory) {
             session.setAttribute("errorMsg", "Category Name already exists");
@@ -116,7 +116,7 @@ public class AdminController {
             } else {
                 File saveFile = new ClassPathResource("static/img").getFile();
                 Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category_img" + File.separator
-                + file.getOriginalFilename());
+                        + file.getOriginalFilename());
 
                 System.out.println(path);
                 Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
@@ -196,7 +196,7 @@ public class AdminController {
             File saveFile = new ClassPathResource("static/img").getFile();
 
             Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "book_img" + File.separator
-                + image.getOriginalFilename());
+                    + image.getOriginalFilename());
 
 //            System.out.println(path);
             Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
@@ -381,7 +381,7 @@ public class AdminController {
 
     @PostMapping("/save-admin")
     public String saveAdmin(@ModelAttribute UserDtls user, @RequestParam("img") MultipartFile file, HttpSession session)
-        throws IOException {
+            throws IOException {
 
         String imageName = file.isEmpty() ? "default.jpg" : file.getOriginalFilename();
         user.setProfileImage(imageName);

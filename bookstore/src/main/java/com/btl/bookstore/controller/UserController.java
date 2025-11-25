@@ -112,11 +112,20 @@ public class UserController {
     }
 
     @PostMapping("/save-order")
-    public String saveOrder(@ModelAttribute OrderRequest request, Principal p) throws Exception {
-        // System.out.println(request);
+    public String saveOrder(@ModelAttribute OrderRequest request, Principal p, HttpSession session) throws Exception {
         UserDtls user = getLoggedInUserDetails(p);
+        
+        // Check if cart has sufficient stock before saving order
+        List<Cart> carts = cartService.getCartsByUser(user.getId());
+        
+        for (Cart cart : carts) {
+            if (cart.getBook().getStock() < cart.getQuantity()) {
+                session.setAttribute("errorMsg", "Insufficient stock for " + cart.getBook().getTitle());
+                return "redirect:/user/order";
+            }
+        }
+        
         orderService.saveOrder(user.getId(), request);
-
         return "redirect:/user/success";
     }
 

@@ -32,6 +32,11 @@ public class CartServiceImpl implements CartService {
         UserDtls userDtls = userRepository.findById(userId).get();
         Book book = bookRepository.findById(bookId).get();
 
+        // Check if book is in stock
+        if (book.getStock() <= 0) {
+            return null;
+        }
+
         Cart cartStatus = cartRepository.findByBookIdAndUserId(bookId, userId);
 
         Cart cart = null;
@@ -44,6 +49,10 @@ public class CartServiceImpl implements CartService {
             cart.setTotalPrice(1 * book.getDiscountPrice());
         } else {
             cart = cartStatus;
+            // Check if adding more would exceed stock
+            if (cart.getQuantity() >= book.getStock()) {
+                return null;
+            }
             cart.setQuantity(cart.getQuantity() + 1);
             cart.setTotalPrice(cart.getQuantity() * cart.getBook().getDiscountPrice());
         }

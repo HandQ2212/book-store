@@ -151,8 +151,7 @@ public class UserServiceImpl implements UserService {
                 Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "profile_img" + File.separator
                         + img.getOriginalFilename());
 
-//			System.out.println(path);
-                Files.copy(img.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+    Files.copy(img.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
             e.printStackTrace();
