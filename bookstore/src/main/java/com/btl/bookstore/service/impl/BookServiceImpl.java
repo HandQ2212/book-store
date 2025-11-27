@@ -3,8 +3,10 @@ package com.btl.bookstore.service.impl;
 import com.btl.bookstore.model.Book;
 import com.btl.bookstore.repository.BookRepository;
 import com.btl.bookstore.service.BookService;
+import com.btl.bookstore.service.CloudinaryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,18 +14,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Service
 public class BookServiceImpl implements BookService {
 
+    private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
+
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public Book saveBook(Book book) {
@@ -62,14 +64,13 @@ public class BookServiceImpl implements BookService {
     public Book updateBook(Book book, MultipartFile image) {
         Book dbBook = getBookById(book.getId());
 
-        String imageName = image.isEmpty() ? dbBook.getImage() : image.getOriginalFilename();
+        String imageName = dbBook.getImage();
 
         dbBook.setTitle(book.getTitle());
         dbBook.setDescription(book.getDescription());
         dbBook.setCategory(book.getCategory());
         dbBook.setPrice(book.getPrice());
         dbBook.setStock(book.getStock());
-        dbBook.setImage(imageName);
         dbBook.setIsActive(book.getIsActive());
         dbBook.setDiscount(book.getDiscount());
 
@@ -78,26 +79,30 @@ public class BookServiceImpl implements BookService {
         Double discountPrice = book.getPrice() - disocunt;
         dbBook.setDiscountPrice(discountPrice);
 
-        Book updateBook = bookRepository.save(dbBook);
-
-        if (!ObjectUtils.isEmpty(updateBook)) {
-
-            if (!image.isEmpty()) {
-
+        if (!image.isEmpty()) {
+            // Delete old image from Cloudinary
+            if (imageName != null && !imageName.isEmpty() && imageName.startsWith("https")) {
                 try {
-                    File saveFile = new ClassPathResource("static/img").getFile();
-
-                    Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "book_img" + File.separator
-                            + image.getOriginalFilename());
-                    Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
+                    String publicId = extractPublicIdFromUrl(imageName, "books");
+                    if (publicId != null) {
+                        cloudinaryService.deleteImage(publicId);
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.warn("Failed to delete old book image", e);
                 }
             }
-            return book;
+            // Upload new image
+            try {
+                imageName = cloudinaryService.uploadImage(image, "books");
+            } catch (Exception e) {
+                logger.error("Error uploading book image", e);
+            }
         }
-        return null;
+
+        dbBook.setImage(imageName);
+        Book updateBook = bookRepository.save(dbBook);
+
+        return !ObjectUtils.isEmpty(updateBook) ? updateBook : null;
     }
 
     @Override
@@ -115,6 +120,27 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> searchBook(String ch) {
         return bookRepository.findByTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch, ch);
+    }
+
+    private String extractPublicIdFromUrl(String url, String folder) {
+        try {
+            if (url == null || !url.contains("cloudinary")) {
+                return null;
+            }
+            // URL format: https://res.cloudinary.com/da4dr8ghb/image/upload/v1234567890/bookstore/books/public_id.ext
+            int lastSlashIndex = url.lastIndexOf('/');
+            if (lastSlashIndex == -1) return null;
+
+            String fileNameWithExt = url.substring(lastSlashIndex + 1);
+            int dotIndex = fileNameWithExt.lastIndexOf('.');
+            if (dotIndex > 0) {
+                return folder + "/" + fileNameWithExt.substring(0, dotIndex);
+            }
+            return folder + "/" + fileNameWithExt;
+        } catch (Exception e) {
+            logger.warn("Failed to extract public ID from URL: " + url, e);
+            return null;
+        }
     }
 
     @Override

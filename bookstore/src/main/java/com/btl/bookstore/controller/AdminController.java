@@ -8,6 +8,8 @@ import com.btl.bookstore.service.*;
 import com.btl.bookstore.util.CommonUtil;
 import com.btl.bookstore.util.OrderStatus;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +28,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
     @Autowired
     private CategoryService categoryService;
@@ -152,6 +156,18 @@ public class AdminController {
             String imageName = oldCategory.getImageName();
 
             if (file != null && !file.isEmpty()) {
+                // Delete old image from Cloudinary
+                if (imageName != null && !imageName.isEmpty() && imageName.startsWith("https")) {
+                    try {
+                        String publicId = extractPublicIdFromUrl(imageName, "category");
+                        if (publicId != null) {
+                            cloudinaryService.deleteImage(publicId);
+                        }
+                    } catch (Exception e) {
+                        logger.warn("Failed to delete old category image", e);
+                    }
+                }
+                // Upload new image
                 String imageUrl = cloudinaryService.uploadImage(file, "category");
                 imageName = imageUrl;
             }
@@ -427,6 +443,27 @@ public class AdminController {
         }
 
         return "redirect:/admin/profile";
+    }
+
+    private String extractPublicIdFromUrl(String url, String folder) {
+        try {
+            if (url == null || !url.contains("cloudinary")) {
+                return null;
+            }
+            // URL format: https://res.cloudinary.com/da4dr8ghb/image/upload/v1234567890/bookstore/category/public_id.ext
+            int lastSlashIndex = url.lastIndexOf('/');
+            if (lastSlashIndex == -1) return null;
+
+            String fileNameWithExt = url.substring(lastSlashIndex + 1);
+            int dotIndex = fileNameWithExt.lastIndexOf('.');
+            if (dotIndex > 0) {
+                return folder + "/" + fileNameWithExt.substring(0, dotIndex);
+            }
+            return folder + "/" + fileNameWithExt;
+        } catch (Exception e) {
+            logger.warn("Failed to extract public ID from URL: " + url, e);
+            return null;
+        }
     }
 
 }

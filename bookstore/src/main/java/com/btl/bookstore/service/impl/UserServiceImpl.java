@@ -133,6 +133,19 @@ public class UserServiceImpl implements UserService {
 
         try {
             if (img != null && !img.isEmpty()) {
+                // Delete old image from Cloudinary
+                String oldImage = dbUser.getProfileImage();
+                if (oldImage != null && !oldImage.isEmpty() && oldImage.startsWith("https")) {
+                    try {
+                        String publicId = extractPublicIdFromUrl(oldImage, "profile");
+                        if (publicId != null) {
+                            cloudinaryService.deleteImage(publicId);
+                        }
+                    } catch (Exception e) {
+                        logger.warn("Failed to delete old profile image", e);
+                    }
+                }
+                // Upload new image
                 String imageUrl = cloudinaryService.uploadImage(img, "profile");
                 dbUser.setProfileImage(imageUrl);
             }
@@ -169,6 +182,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean existsEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    private String extractPublicIdFromUrl(String url, String folder) {
+        try {
+            if (url == null || !url.contains("cloudinary")) {
+                return null;
+            }
+            // URL format: https://res.cloudinary.com/da4dr8ghb/image/upload/v1234567890/bookstore/profile/public_id.ext
+            int lastSlashIndex = url.lastIndexOf('/');
+            if (lastSlashIndex == -1) return null;
+
+            String fileNameWithExt = url.substring(lastSlashIndex + 1);
+            int dotIndex = fileNameWithExt.lastIndexOf('.');
+            if (dotIndex > 0) {
+                return folder + "/" + fileNameWithExt.substring(0, dotIndex);
+            }
+            return folder + "/" + fileNameWithExt;
+        } catch (Exception e) {
+            logger.warn("Failed to extract public ID from URL: " + url, e);
+            return null;
+        }
     }
 
 }
