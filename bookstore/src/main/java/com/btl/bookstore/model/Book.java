@@ -24,10 +24,10 @@ public class Book {
     @Column(length = 500)
     private String title;
 
-    @Column(columnDefinition = "NVARCHAR(MAX)")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Column(length = 255)
     private String category;
 
     private Double price;
