@@ -411,11 +411,18 @@
         fetch('/admin/chat/user-list')
             .then(response => response.json())
             .then(users => {
+                console.log('Loaded user list:', users.length, 'users');
+                
                 if (users.length === 0) {
                     userList.innerHTML = '<div class="empty-user-list">Chưa có tin nhắn từ user nào</div>';
+                    chatBadge.classList.remove('show');
                 } else {
                     userList.innerHTML = '';
+                    let totalUnread = 0;
+                    
                     users.forEach(user => {
+                        totalUnread += user.unreadCount || 0;
+                        
                         const userDiv = document.createElement('div');
                         userDiv.className = 'user-item';
                         userDiv.dataset.userId = user.id;
@@ -439,6 +446,14 @@
 
                         userList.appendChild(userDiv);
                     });
+                    
+                    // Update badge with total unread count
+                    if (totalUnread > 0) {
+                        chatBadge.textContent = totalUnread;
+                        chatBadge.classList.add('show');
+                    } else {
+                        chatBadge.classList.remove('show');
+                    }
                 }
             });
     }
@@ -511,7 +526,11 @@
 
             stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function(message) {
                 const notification = JSON.parse(message.body);
+                console.log('Received message from user:', notification.senderId);
 
+                // Always reload user list immediately when receiving new message
+                loadUserList();
+                
                 if (chatWindow.classList.contains('show') && selectedUser && selectedUser.id === notification.senderId) {
                     addMessageToUI({
                         content: notification.content,
@@ -519,20 +538,21 @@
                         senderName: notification.senderName,
                         isOwn: false
                     });
-                } else {
-                    updateUnreadCount();
-                    if (chatWindow.classList.contains('show')) {
-                        loadUserList();
-                    }
                 }
+                
+                updateUnreadCount();
             });
         });
     }
 
     if (currentUserId) {
         connect();
+        loadUserList(); // Load immediately on page load
         updateUnreadCount();
-        setInterval(updateUnreadCount, 30000);
+        
+        // Auto refresh user list and unread count more frequently
+        setInterval(updateUnreadCount, 10000); // Every 10 seconds
+        setInterval(loadUserList, 3000); // Every 3 seconds for faster updates
     }
 </script>
 </body>

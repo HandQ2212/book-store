@@ -80,6 +80,7 @@
                     chatRoomId: currentChatRoomId
                 };
 
+                console.log('Sending message to admin:', currentAdminId, 'Content:', content);
                 stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
                 chatInput.value = '';
 
