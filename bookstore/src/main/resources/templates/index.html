@@ -58,8 +58,8 @@
                     <div class="book-card-body">
                         <h5 class="book-card-title" th:text="${p.title}"></h5>
                         <div class="book-card-price">
-                            <span class="book-card-price-current">₹[[${p.discountPrice}]]</span>
-                            <span class="book-card-price-original">₹[[${p.price}]]</span>
+                            <span class="book-card-price-current">[[${#numbers.formatInteger(p.discountPrice,0)}]]đ</span>
+                            <span class="book-card-price-original">[[${#numbers.formatInteger(p.price,0)}]]đ</span>
                         </div>
                         <span class="book-card-discount">[[${p.discount}]]% OFF</span>
                         <div class="book-card-action">

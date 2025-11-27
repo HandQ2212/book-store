@@ -60,9 +60,8 @@
                                             <p class="fs-5 text-center">[[${p.title}]]</p>
                                             <div class="row text-center">
                                                 <p class="fs-6 fw-bold ">
-                                                    <span><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block> [[${p.discountPrice}]]</span> <br> <span
-                                                        class="text-decoration-line-through text-secondary"><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
-															[[${p.price}]]</span> <span class="fs-6 text-success">[[${p.discount}]]%
+                                                    <span>[[${#numbers.formatInteger(p.discountPrice,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></span> <br> <span
+                                                        class="text-decoration-line-through text-secondary">[[${#numbers.formatInteger(p.price,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></span> <span class="fs-6 text-success">[[${p.discount}]]%
 															off </span>
                                                 </p>
                                                 <a th:href="@{'/book/'+${p.id}}"

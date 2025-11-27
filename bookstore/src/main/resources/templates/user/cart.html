@@ -54,7 +54,7 @@
           <tr>
             <td colspan="4"></td>
             <td class="fw-bold">Total Price</td>
-            <td class="fw-bold"><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block> [[${totalOrderPrice}]]</td>
+            <td class="fw-bold">[[${#numbers.formatInteger(totalOrderPrice,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
           </tr>
 
           </tbody>

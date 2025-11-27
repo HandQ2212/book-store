@@ -72,24 +72,24 @@
                                 <tr>
                                     <td>Total price</td>
                                     <td>:</td>
-                                    <td><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block> [[${orderPrice}]]</td>
+                                    <td>[[${#numbers.formatInteger(orderPrice,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
                                 </tr>
                                 <tr>
                                     <td>Delivery Fee</td>
                                     <td>:</td>
-                                    <td><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block> 250</td>
+                                    <td>250<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
                                 </tr>
 
                                 <tr>
                                     <td>Tax</td>
                                     <td>:</td>
-                                    <td><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block> 100</td>
+                                    <td>100<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
                                 </tr>
 
                                 <tr class="border-top">
                                     <td>Total Price</td>
                                     <td>:</td>
-                                    <td><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block> [[${totalOrderPrice}]]</td>
+                                    <td>[[${#numbers.formatInteger(totalOrderPrice,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
                                 </tr>
                                 </tbody>
                             </table>
