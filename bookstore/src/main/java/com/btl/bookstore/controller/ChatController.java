@@ -86,11 +86,22 @@ public class ChatController {
     @GetMapping("/chat/unread-count")
     @ResponseBody
     public Map<String, Long> getUnreadCount(Principal principal) {
+        Map<String, Long> result = new HashMap<>();
+        
+        if (principal == null) {
+            result.put("count", 0L);
+            return result;
+        }
+        
         String currentUserEmail = principal.getName();
         UserDtls currentUser = userRepository.findByEmail(currentUserEmail);
+        
+        if (currentUser == null) {
+            result.put("count", 0L);
+            return result;
+        }
 
         Long count = chatMessageService.countUnreadMessages(currentUser.getId());
-        Map<String, Long> result = new HashMap<>();
         result.put("count", count);
         return result;
     }
