@@ -85,9 +85,21 @@ public class UserController {
         return "/user/cart";
     }
 
+    @PostMapping("/updateCartSelection")
+    @ResponseBody
+    public String updateCartSelection(@RequestBody List<Integer> selectedIds, Principal p) {
+        UserDtls user = getLoggedInUserDetails(p);
+        cartService.updateCartSelection(selectedIds, user.getId());
+        return "success";
+    }
+
     @GetMapping("/cartQuantityUpdate")
-    public String updateCartQuantity(@RequestParam String sy, @RequestParam Integer cid) {
-        cartService.updateQuantity(sy, cid);
+    public String updateCartQuantity(@RequestParam String sy, @RequestParam Integer cid, HttpSession session) {
+        try {
+            cartService.updateQuantity(sy, cid);
+        } catch (RuntimeException e) {
+            session.setAttribute("errorMsg", "Số lượng vượt quá kho! " + e.getMessage());
+        }
         return "redirect:/user/cart";
     }
 
@@ -101,11 +113,24 @@ public class UserController {
     public String orderPage(Principal p, Model m) {
         UserDtls user = getLoggedInUserDetails(p);
         List<Cart> carts = cartService.getCartsByUser(user.getId());
-        m.addAttribute("carts", carts);
-        if (carts.size() > 0) {
-            Double orderPrice = carts.get(carts.size() - 1).getTotalOrderPrice();
-            Double totalOrderPrice = carts.get(carts.size() - 1).getTotalOrderPrice() + 250 + 100;
+        
+        // Lọc chỉ những items được chọn
+        List<Cart> selectedCarts = carts.stream()
+                .filter(cart -> cart.getSelected() != null && cart.getSelected())
+                .toList();
+        
+        m.addAttribute("carts", selectedCarts);
+        if (selectedCarts.size() > 0) {
+            // Tính tổng tiền chỉ từ items được chọn
+            Double orderPrice = selectedCarts.stream()
+                    .mapToDouble(cart -> cart.getTotalPrice())
+                    .sum();
+            Double deliveryFee = 2500.0;
+            Double tax = orderPrice * 0.05; // 5% của subtotal
+            Double totalOrderPrice = orderPrice + deliveryFee + tax;
             m.addAttribute("orderPrice", orderPrice);
+            m.addAttribute("deliveryFee", deliveryFee);
+            m.addAttribute("tax", tax);
             m.addAttribute("totalOrderPrice", totalOrderPrice);
         }
         return "/user/order";
@@ -119,9 +144,13 @@ public class UserController {
         List<Cart> carts = cartService.getCartsByUser(user.getId());
         
         for (Cart cart : carts) {
-            if (cart.getBook().getStock() < cart.getQuantity()) {
-                session.setAttribute("errorMsg", "Insufficient stock for " + cart.getBook().getTitle());
-                return "redirect:/user/order";
+            // Chỉ kiểm tra các items đã được chọn
+            if (cart.getSelected() != null && cart.getSelected()) {
+                if (cart.getBook().getStock() < cart.getQuantity()) {
+                    session.setAttribute("errorMsg", "Không đủ hàng cho sách '" + cart.getBook().getTitle() + 
+                        "'. Còn lại: " + cart.getBook().getStock() + ", Yêu cầu: " + cart.getQuantity());
+                    return "redirect:/user/orders";
+                }
             }
         }
         

@@ -101,9 +101,25 @@ public class CartServiceImpl implements CartService {
             }
         } else {
             updateQuantity = cart.getQuantity() + 1;
+            // Kiểm tra stock trước khi tăng số lượng
+            if (updateQuantity > cart.getBook().getStock()) {
+                throw new RuntimeException("Insufficient stock. Available: " + cart.getBook().getStock());
+            }
             cart.setQuantity(updateQuantity);
             cartRepository.save(cart);
         }
 
+    }
+
+    @Override
+    public void updateCartSelection(List<Integer> selectedIds, Integer userId) {
+        // Lấy tất cả cart items của user
+        List<Cart> carts = cartRepository.findByUserId(userId);
+        
+        // Cập nhật trạng thái selected
+        for (Cart cart : carts) {
+            cart.setSelected(selectedIds.contains(cart.getId()));
+            cartRepository.save(cart);
+        }
     }
 }

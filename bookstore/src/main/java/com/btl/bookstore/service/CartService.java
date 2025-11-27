@@ -15,4 +15,6 @@ public interface CartService {
 
     public void updateQuantity(String sy, Integer cid);
 
+    public void updateCartSelection(List<Integer> selectedIds, Integer userId);
+
 }

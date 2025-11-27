@@ -3,7 +3,7 @@
       th:replace="~{base::layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
-    <title>Insert title here</title>
+    <title>Book Store</title>
 </head>
 <body>
 <section>
@@ -66,26 +66,26 @@
                             <table class="table table-borderless">
                                 <tbody>
                                 <tr>
-                                    <td>Total price</td>
+                                    <td>Subtotal</td>
                                     <td>:</td>
                                     <td>[[${#numbers.formatInteger(orderPrice,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
                                 </tr>
                                 <tr>
                                     <td>Delivery Fee</td>
                                     <td>:</td>
-                                    <td>250<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+                                    <td>[[${#numbers.formatInteger(deliveryFee,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
                                 </tr>
 
                                 <tr>
-                                    <td>Tax</td>
+                                    <td>Tax (5%)</td>
                                     <td>:</td>
-                                    <td>100<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+                                    <td>[[${#numbers.formatInteger(tax,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
                                 </tr>
 
                                 <tr class="border-top">
-                                    <td>Total Price</td>
+                                    <td><strong>Total Payment</strong></td>
                                     <td>:</td>
-                                    <td>[[${#numbers.formatInteger(totalOrderPrice,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+                                    <td><strong>[[${#numbers.formatInteger(totalOrderPrice,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></strong></td>
                                 </tr>
                                 </tbody>
                             </table>

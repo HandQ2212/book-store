@@ -3,7 +3,7 @@
       th:replace="~{base::layout(~{::section})}">
 <head>
   <meta charset="UTF-8">
-  <title>Insert title here</title>
+  <title>Book Store</title>
 </head>
 <body>
 <section>
@@ -26,45 +26,160 @@
         <table class="table">
           <thead>
           <tr>
+            <th scope="col">
+              <input type="checkbox" id="selectAll" checked onchange="toggleSelectAll()">
+            </th>
             <th scope="col">Sl No</th>
             <th scope="col">Image</th>
             <th scope="col">Book Name</th>
-            <th scope="col">Price</th>
+            <th scope="col">Unit Price</th>
             <th scope="col" class="text-center">Quantity</th>
-            <th scope="col">Total Price</th>
+            <th scope="col">Item Total</th>
           </tr>
           </thead>
           <tbody>
           <tr th:each="cart,c:${carts}">
+            <td>
+              <input type="checkbox" 
+                     th:id="'cart-' + ${cart.id}"
+                     th:data-cart-id="${cart.id}"
+                     th:data-price="${cart.totalPrice}"
+                     th:data-quantity="${cart.quantity}"
+                     th:data-stock="${cart.book.stock}"
+                     th:checked="${cart.selected}"
+                     class="cart-checkbox"
+                     onchange="updateTotal()">
+            </td>
             <th scope="row">[[${c.count}]]</th>
             <td><img
                     th:src="${@commonUtil.getImageUrl(cart.book.image)}"
                     width="70px" height="70px"></td>
-            <td>[[${cart.book.title}]]</td>
+            <td>
+              [[${cart.book.title}]]
+              <br>
+              <small class="text-muted">Stock: [[${cart.book.stock}]]</small>
+              <span th:if="${cart.quantity > cart.book.stock}" class="badge bg-danger ms-2">Không đủ hàng!</span>
+            </td>
             <td>[[${cart.book.discountPrice}]]</td>
             <td class="text-center"><a
                     th:href="@{'/user/cartQuantityUpdate?sy=de&cid='+${cart.id}}">
               <i class="fa-solid fa-minus"></i>
             </a> [ [[${cart.quantity}]] ] <a
-                    th:href="@{'/user/cartQuantityUpdate?sy=in&cid='+${cart.id}}">
+                    th:href="@{'/user/cartQuantityUpdate?sy=in&cid='+${cart.id}}"
+                    th:classappend="${cart.quantity >= cart.book.stock} ? 'disabled text-muted' : ''">
               <i class="fa-solid fa-plus"></i>
             </a></td>
             <td>[[${cart.totalPrice}]]</td>
           </tr>
           <tr>
-            <td colspan="4"></td>
-            <td class="fw-bold">Total Price</td>
-            <td class="fw-bold">[[${#numbers.formatInteger(totalOrderPrice,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+            <td colspan="5"></td>
+            <td class="fw-bold">Total Cart Price</td>
+            <td class="fw-bold"><span id="totalPrice">[[${#numbers.formatInteger(totalOrderPrice,0)}]]</span><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
           </tr>
 
           </tbody>
         </table>
         <div class="text-center">
-          <a href="/user/orders" class="btn btn-warning"> Proceed Payment</a>
+          <button id="proceedBtn" class="btn btn-warning" onclick="return saveSelectedItems()" th:disabled="${carts.size() == 0}">
+            Proceed Payment
+          </button>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    // Hàm cập nhật tổng tiền khi chọn/bỏ chọn checkbox
+    function updateTotal() {
+      let total = 0;
+      const checkboxes = document.querySelectorAll('.cart-checkbox');
+      let selectedCount = 0;
+      
+      checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          const price = parseFloat(checkbox.getAttribute('data-price'));
+          total += price;
+          selectedCount++;
+        }
+      });
+      
+      document.getElementById('totalPrice').textContent = Math.round(total);
+      
+      // Vô hiệu hóa nút nếu không có sản phẩm nào được chọn
+      const proceedBtn = document.getElementById('proceedBtn');
+      proceedBtn.disabled = (selectedCount === 0);
+      
+      // Cập nhật trạng thái select all
+      const selectAllCheckbox = document.getElementById('selectAll');
+      selectAllCheckbox.checked = Array.from(checkboxes).every(cb => cb.checked);
+    }
+    
+    // Hàm chọn/bỏ chọn tất cả
+    function toggleSelectAll() {
+      const selectAllCheckbox = document.getElementById('selectAll');
+      const checkboxes = document.querySelectorAll('.cart-checkbox');
+      
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+      });
+      
+      updateTotal();
+    }
+    
+    // Hàm lưu các items được chọn trước khi proceed
+    function saveSelectedItems() {
+      const selectedIds = [];
+      const checkboxes = document.querySelectorAll('.cart-checkbox:checked');
+      
+      if (checkboxes.length === 0) {
+        alert('Vui lòng chọn ít nhất một sản phẩm!');
+        return false;
+      }
+      
+      // Kiểm tra stock của các items được chọn
+      let hasInsufficientStock = false;
+      let insufficientItems = [];
+      
+      checkboxes.forEach(checkbox => {
+        const quantity = parseInt(checkbox.getAttribute('data-quantity'));
+        const stock = parseInt(checkbox.getAttribute('data-stock'));
+        
+        if (quantity > stock) {
+          hasInsufficientStock = true;
+          const row = checkbox.closest('tr');
+          const bookTitle = row.querySelector('td:nth-child(4)').textContent.trim().split('\n')[0];
+          insufficientItems.push(bookTitle + ' (Cần: ' + quantity + ', Còn: ' + stock + ')');
+        }
+        
+        selectedIds.push(checkbox.getAttribute('data-cart-id'));
+      });
+      
+      if (hasInsufficientStock) {
+        alert('Một số sản phẩm không đủ hàng trong kho:\n\n' + insufficientItems.join('\n') + '\n\nVui lòng giảm số lượng hoặc bỏ chọn sản phẩm này!');
+        return false;
+      }
+      
+      // Gửi request để update selected status
+      fetch('/user/updateCartSelection', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(selectedIds)
+      }).then(response => {
+        if (response.ok) {
+          window.location.href = '/user/orders';
+        }
+      });
+      
+      return false;
+    }
+    
+    // Initialize total on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      updateTotal();
+    });
+  </script>
 
 </section>
 </body>

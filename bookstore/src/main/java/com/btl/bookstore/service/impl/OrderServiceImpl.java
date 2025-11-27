@@ -47,6 +47,11 @@ public class OrderServiceImpl implements OrderService {
         List<Cart> carts = cartRepository.findByUserId(userid);
 
         for (Cart cart : carts) {
+            
+            // Chỉ tạo đơn hàng cho những items được chọn
+            if (cart.getSelected() == null || !cart.getSelected()) {
+                continue;
+            }
 
             BookOrder order = new BookOrder();
 
@@ -82,10 +87,22 @@ public class OrderServiceImpl implements OrderService {
             book.setStock(newStock);
             bookRepository.save(book);
             
-            resetCart(cart.getUser());
             commonUtil.sendMailForBookOrder(saveOrder, "success");
         }
+        
+        // Xóa cart sau khi đặt hàng (chỉ xóa items đã được chọn)
+        resetSelectedCart(userid);
     }
+    
+    private void resetSelectedCart(Integer userid) {
+        List<Cart> carts = cartRepository.findByUserId(userid);
+        for (Cart cart : carts) {
+            if (cart.getSelected() != null && cart.getSelected()) {
+                cartRepository.delete(cart);
+            }
+        }
+    }
+    
     private void resetCart(UserDtls user) {
         cartRepository.deleteByUser(user);
     }

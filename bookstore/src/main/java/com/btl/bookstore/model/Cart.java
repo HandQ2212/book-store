@@ -30,6 +30,8 @@ public class Cart {
 
     private Integer quantity;
 
+    private Boolean selected = true; // Mặc định được chọn
+
     @Transient
     private Double totalPrice;
 
