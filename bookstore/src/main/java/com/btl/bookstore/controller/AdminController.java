@@ -9,7 +9,6 @@ import com.btl.bookstore.util.CommonUtil;
 import com.btl.bookstore.util.OrderStatus;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -20,12 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
 
@@ -47,6 +41,9 @@ public class AdminController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Autowired
     private CommonUtil commonUtil;
@@ -101,28 +98,29 @@ public class AdminController {
     @PostMapping("/saveCategory")
     public String saveCategory(@ModelAttribute Category category, @RequestParam("file")MultipartFile file,
                                HttpSession session) throws IOException {
-        String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
-        category.setImageName(imageName);
-
-        Boolean existCategory = categoryService.existCategoryIgnoreCase(category.getName());
-
-        if (existCategory) {
-            session.setAttribute("errorMsg", "Category Name already exists");
-        } else {
-
-            Category saveCategory = categoryService.saveCategory(category);
-            if (ObjectUtils.isEmpty(saveCategory)) {
-                session.setAttribute("errorMsg", "Not saved ! internal server error");
-            } else {
-                File saveFile = new ClassPathResource("static/img").getFile();
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category_img" + File.separator
-                        + file.getOriginalFilename());
-
-                System.out.println(path);
-                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-                session.setAttribute("succMsg", "Saved successfully");
+        try {
+            String imageName = "default.jpg";
+            
+            if (file != null && !file.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadImage(file, "category");
+                imageName = imageUrl;
             }
+            
+            category.setImageName(imageName);
+            Boolean existCategory = categoryService.existCategoryIgnoreCase(category.getName());
+
+            if (existCategory) {
+                session.setAttribute("errorMsg", "Category Name already exists");
+            } else {
+                Category saveCategory = categoryService.saveCategory(category);
+                if (ObjectUtils.isEmpty(saveCategory)) {
+                    session.setAttribute("errorMsg", "Not saved ! internal server error");
+                } else {
+                    session.setAttribute("succMsg", "Saved successfully");
+                }
+            }
+        } catch (Exception e) {
+            session.setAttribute("errorMsg", "Error uploading image: " + e.getMessage());
         }
         return "redirect:/admin/category";
     }
@@ -149,34 +147,30 @@ public class AdminController {
     @PostMapping("/updateCategory")
     public String updateCategory(@ModelAttribute Category category, @RequestParam("file") MultipartFile file,
                                  HttpSession session) throws IOException {
+        try {
+            Category oldCategory = categoryService.getCategoryById(category.getId());
+            String imageName = oldCategory.getImageName();
 
-        Category oldCategory = categoryService.getCategoryById(category.getId());
-        String imageName = file.isEmpty() ? oldCategory.getImageName() : file.getOriginalFilename();
-
-        if (!ObjectUtils.isEmpty(category)) {
-
-            oldCategory.setName(category.getName());
-            oldCategory.setIsActive(category.getIsActive());
-            oldCategory.setImageName(imageName);
-        }
-
-        Category updateCategory = categoryService.saveCategory(oldCategory);
-
-        if (!ObjectUtils.isEmpty(updateCategory)) {
-
-            if (!file.isEmpty()) {
-                File saveFile = new ClassPathResource("static/img").getFile();
-
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category_img" + File.separator
-                        + file.getOriginalFilename());
-
-                // System.out.println(path);
-                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            if (file != null && !file.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadImage(file, "category");
+                imageName = imageUrl;
             }
 
-            session.setAttribute("succMsg", "Category update success");
-        } else {
-            session.setAttribute("errorMsg", "something wrong on server");
+            if (!ObjectUtils.isEmpty(category)) {
+                oldCategory.setName(category.getName());
+                oldCategory.setIsActive(category.getIsActive());
+                oldCategory.setImageName(imageName);
+            }
+
+            Category updateCategory = categoryService.saveCategory(oldCategory);
+
+            if (!ObjectUtils.isEmpty(updateCategory)) {
+                session.setAttribute("succMsg", "Category update success");
+            } else {
+                session.setAttribute("errorMsg", "something wrong on server");
+            }
+        } catch (Exception e) {
+            session.setAttribute("errorMsg", "Error uploading image: " + e.getMessage());
         }
 
         return "redirect:/admin/loadEditCategory/" + category.getId();
@@ -185,28 +179,28 @@ public class AdminController {
     @PostMapping("/saveBook")
     public String saveBook(@ModelAttribute Book book, @RequestParam("file") MultipartFile image,
                            HttpSession session) throws IOException {
-        String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
+        try {
+            String imageName = "default.jpg";
+            
+            if (image != null && !image.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadImage(image, "books");
+                imageName = imageUrl;
+            }
 
-        book.setImage(imageName);
-        book.setDiscount(0);
-        book.setDiscountPrice(book.getPrice());
-        Book saveBook = bookService.saveBook(book);
+            book.setImage(imageName);
+            book.setDiscount(0);
+            book.setDiscountPrice(book.getPrice());
+            Book saveBook = bookService.saveBook(book);
 
-        if (!ObjectUtils.isEmpty(saveBook)) {
-            File saveFile = new ClassPathResource("static/img").getFile();
-
-            Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "book_img" + File.separator
-                    + image.getOriginalFilename());
-
-//            System.out.println(path);
-            Files.copy(image.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-            session.setAttribute("succMsg", "Book SavedSuccess");
-        } else {
-            session.setAttribute("errorMsg", "Something wrong on server");
+            if (!ObjectUtils.isEmpty(saveBook)) {
+                session.setAttribute("succMsg", "Book Saved Successfully");
+            } else {
+                session.setAttribute("errorMsg", "Something wrong on server");
+            }
+        } catch (Exception e) {
+            session.setAttribute("errorMsg", "Error uploading image: " + e.getMessage());
         }
         return "redirect:/admin/loadAddBook";
-//        return "redirect:/admin/add_book";
     }
 
     @GetMapping("/books")
@@ -299,10 +293,6 @@ public class AdminController {
     @GetMapping("/orders")
     public String getAllOrders(Model m, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
                                @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-//        List<BookOrder> allOrders = orderService.getAllOrders();
-//        m.addAttribute("orders", allOrders);
-//        m.addAttribute("srch", false);
-
         Page<BookOrder> page = orderService.getAllOrdersPagination(pageNo, pageSize);
         m.addAttribute("orders", page.getContent());
         m.addAttribute("srch", false);
@@ -357,9 +347,6 @@ public class AdminController {
             }
             m.addAttribute("srch", true);
         } else {
-//            List<BookOrder> allOrders = orderService.getAllOrders();
-//            m.addAttribute("orders", allOrders);
-//            m.addAttribute("srch", false);
             Page<BookOrder> page = orderService.getAllOrdersPagination(pageNo, pageSize);
             m.addAttribute("orders", page);
             m.addAttribute("srch", false);
@@ -382,24 +369,24 @@ public class AdminController {
     @PostMapping("/save-admin")
     public String saveAdmin(@ModelAttribute UserDtls user, @RequestParam("img") MultipartFile file, HttpSession session)
             throws IOException {
-
-        String imageName = file.isEmpty() ? "default.jpg" : file.getOriginalFilename();
-        user.setProfileImage(imageName);
-        UserDtls saveUser = userService.saveAdmin(user);
-
-        if (!ObjectUtils.isEmpty(saveUser)) {
-            if (!file.isEmpty()) {
-                File saveFile = new ClassPathResource("static/img").getFile();
-
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "profile_img" + File.separator
-                        + file.getOriginalFilename());
-
-//				System.out.println(path);
-                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        try {
+            String imageName = "default.jpg";
+            
+            if (file != null && !file.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadImage(file, "profile");
+                imageName = imageUrl;
             }
-            session.setAttribute("succMsg", "Register successfully");
-        } else {
-            session.setAttribute("errorMsg", "something wrong on server");
+            
+            user.setProfileImage(imageName);
+            UserDtls saveUser = userService.saveAdmin(user);
+
+            if (!ObjectUtils.isEmpty(saveUser)) {
+                session.setAttribute("succMsg", "Register successfully");
+            } else {
+                session.setAttribute("errorMsg", "something wrong on server");
+            }
+        } catch (Exception e) {
+            session.setAttribute("errorMsg", "Error uploading image: " + e.getMessage());
         }
 
         return "redirect:/admin/add-admin";

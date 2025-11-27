@@ -6,6 +6,7 @@ import com.btl.bookstore.model.UserDtls;
 import com.btl.bookstore.service.BookService;
 import com.btl.bookstore.service.CartService;
 import com.btl.bookstore.service.CategoryService;
+import com.btl.bookstore.service.CloudinaryService;
 import com.btl.bookstore.service.UserService;
 import com.btl.bookstore.util.CommonUtil;
 
@@ -14,8 +15,9 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -24,19 +26,16 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
 @Controller
 public class HomeController {
+
+    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     @Autowired
     private CategoryService categoryService;
@@ -55,6 +54,9 @@ public class HomeController {
 
     @Autowired
     private CartService cartService;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @ModelAttribute
     public void getUserDetails(Principal p, Model m) {
@@ -102,8 +104,6 @@ public class HomeController {
         m.addAttribute("paramValue", category);
         m.addAttribute("categories", categories);
 
-//		List<Book> books = bookService.getAllActiveBooks(category);
-//		m.addAttribute("books", books);
         Page<Book> page = null;
         if (StringUtils.isEmpty(ch)) {
             page = bookService.getAllActiveBookPagination(pageNo, pageSize, category);
@@ -127,7 +127,6 @@ public class HomeController {
 
     @GetMapping("/book/{id}")
     public String book(@PathVariable int id, Model m, Principal principal) {
-        // Restrict access to admin users
         if (principal != null) {
             UserDtls user = userService.getUserByEmail(principal.getName());
             if (user != null && "ROLE_ADMIN".equals(user.getRole())) {
@@ -149,30 +148,29 @@ public class HomeController {
         if (existsEmail) {
             session.setAttribute("errorMsg", "Email already exist");
         } else {
-            String imageName = file.isEmpty() ? "default.jpg" : file.getOriginalFilename();
-            user.setProfileImage(imageName);
-            UserDtls saveUser = userService.saveUser(user);
-
-            if (!ObjectUtils.isEmpty(saveUser)) {
-                if (!file.isEmpty()) {
-                    File saveFile = new ClassPathResource("static/img").getFile();
-
-                    Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "profile_img" + File.separator
-                            + file.getOriginalFilename());
-
-//					System.out.println(path);
-                    Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            try {
+                String imageName = "default.jpg";
+                
+                if (file != null && !file.isEmpty()) {
+                    String imageUrl = cloudinaryService.uploadImage(file, "profile");
+                    imageName = imageUrl;
                 }
-                session.setAttribute("succMsg", "Register successfully");
-            } else {
-                session.setAttribute("errorMsg", "something wrong on server");
+                
+                user.setProfileImage(imageName);
+                UserDtls saveUser = userService.saveUser(user);
+
+                if (!ObjectUtils.isEmpty(saveUser)) {
+                    session.setAttribute("succMsg", "Register successfully");
+                } else {
+                    session.setAttribute("errorMsg", "something wrong on server");
+                }
+            } catch (Exception e) {
+                session.setAttribute("errorMsg", "Error uploading image: " + e.getMessage());
             }
         }
 
         return "redirect:/register";
     }
-
-//	Forgot Password Code
 
     @GetMapping("/forgot-password")
     public String showForgotPassword() {
@@ -183,25 +181,31 @@ public class HomeController {
     public String processForgotPassword(@RequestParam String email, HttpSession session, HttpServletRequest request)
             throws UnsupportedEncodingException, MessagingException {
 
-        UserDtls userByEmail = userService.getUserByEmail(email);
+        logger.info("Forgot password request for email: {}", email);
+        String trimmedEmail = email.trim();
+        logger.info("Trimmed email: {}", trimmedEmail);
+        
+        UserDtls userByEmail = userService.getUserByEmail(trimmedEmail);
+        logger.info("User found: {}", userByEmail != null ? "Yes" : "No");
 
         if (ObjectUtils.isEmpty(userByEmail)) {
+            logger.warn("User not found for email: {}", trimmedEmail);
             session.setAttribute("errorMsg", "Invalid email");
         } else {
-
+            logger.info("Generating reset token for user: {}", userByEmail.getEmail());
             String resetToken = UUID.randomUUID().toString();
-            userService.updateUserResetToken(email, resetToken);
-
-            // Generate URL :
-            // http://localhost:8080/reset-password?token=sfgdbgfswegfbdgfewgvsrg
+            userService.updateUserResetToken(trimmedEmail, resetToken);
 
             String url = CommonUtil.generateUrl(request) + "/reset-password?token=" + resetToken;
+            logger.info("Reset URL: {}", url);
 
-            Boolean sendMail = commonUtil.sendMail(url, email);
+            Boolean sendMail = commonUtil.sendMail(url, trimmedEmail);
+            logger.info("Email sent: {}", sendMail);
 
             if (sendMail) {
                 session.setAttribute("succMsg", "Please check your email..Password Reset link sent");
             } else {
+                logger.error("Failed to send email");
                 session.setAttribute("errorMsg", "Somethong wrong on server ! Email not send");
             }
         }

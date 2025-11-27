@@ -38,7 +38,7 @@
         </div>
         <div class="category-grid">
             <div class="category-card" th:each="c:${category}">
-                <img th:src="@{'/img/category_img/'+${c.imageName}}" th:alt="${c.name}" loading="eager">
+                <img th:src="${@commonUtil.getImageUrl(c.imageName)}" th:alt="${c.name}" loading="eager">
                 <p th:text="${c.name}"></p>
                 <a th:href="@{'/books?category='+${c.name}}">Browse</a>
             </div>
@@ -54,7 +54,7 @@
             </div>
             <div class="book-grid">
                 <div class="book-card" th:each="p:${books}">
-                    <img th:src="@{'/img/book_img/'+${p.image}}" th:alt="${p.title}" class="book-card-img" loading="eager">
+                    <img th:src="${@commonUtil.getImageUrl(p.image)}" th:alt="${p.title}" class="book-card-img" loading="eager">
                     <div class="book-card-body">
                         <h5 class="book-card-title" th:text="${p.title}"></h5>
                         <div class="book-card-price">

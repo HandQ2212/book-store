@@ -55,7 +55,7 @@
                                 <div class="col-md-3 mt-2" th:each="p:${books}">
                                     <div class="card card-sh">
                                         <div class="card-body text-center">
-                                            <img alt="" th:src="@{'/img/book_img/'+${p.image}}"
+                                            <img alt="" th:src="${@commonUtil.getImageUrl(p.image)}"
                                                  width="150px" height="150px">
                                             <p class="fs-5 text-center">[[${p.title}]]</p>
                                             <div class="row text-center">

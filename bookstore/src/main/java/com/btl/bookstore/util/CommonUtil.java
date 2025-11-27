@@ -45,7 +45,7 @@ public class CommonUtil {
 
     public static String generateUrl(HttpServletRequest request) {
 
-String siteUrl = request.getRequestURL().toString();
+        String siteUrl = request.getRequestURL().toString();
 
         return siteUrl.replace(request.getServletPath(), "");
     }
@@ -88,5 +88,15 @@ String siteUrl = request.getRequestURL().toString();
         String email = p.getName();
         UserDtls userDtls = userService.getUserByEmail(email);
         return userDtls;
+    }
+
+    public String getImageUrl(String imagePath) {
+        if (imagePath == null || imagePath.isEmpty()) {
+            return "/img/default.jpg";
+        }
+        if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+            return imagePath;
+        }
+        return "/img/" + imagePath;
     }
 }

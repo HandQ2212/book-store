@@ -1,17 +1,13 @@
 package com.btl.bookstore.service.impl;
 
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -19,17 +15,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.btl.bookstore.model.UserDtls;
 import com.btl.bookstore.repository.UserRepository;
+import com.btl.bookstore.service.CloudinaryService;
 import com.btl.bookstore.service.UserService;
 import com.btl.bookstore.util.AppConstant;
 
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public UserDtls saveUser(UserDtls user) {
@@ -109,7 +111,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserResetToken(String email, String resetToken) {
-        UserDtls findByEmail = userRepository.findByEmail(email);
+        UserDtls findByEmail = userRepository.findByEmail(email.trim());
         findByEmail.setResetToken(resetToken);
         userRepository.save(findByEmail);
     }
@@ -129,32 +131,23 @@ public class UserServiceImpl implements UserService {
 
         UserDtls dbUser = userRepository.findById(user.getId()).get();
 
-        if (!img.isEmpty()) {
-            dbUser.setProfileImage(img.getOriginalFilename());
-        }
-
-        if (!ObjectUtils.isEmpty(dbUser)) {
-
-            dbUser.setName(user.getName());
-            dbUser.setMobileNumber(user.getMobileNumber());
-            dbUser.setAddress(user.getAddress());
-            dbUser.setCity(user.getCity());
-            dbUser.setState(user.getState());
-            dbUser.setPincode(user.getPincode());
-            dbUser = userRepository.save(dbUser);
-        }
-
         try {
-            if (!img.isEmpty()) {
-                File saveFile = new ClassPathResource("static/img").getFile();
+            if (img != null && !img.isEmpty()) {
+                String imageUrl = cloudinaryService.uploadImage(img, "profile");
+                dbUser.setProfileImage(imageUrl);
+            }
 
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "profile_img" + File.separator
-                        + img.getOriginalFilename());
-
-    Files.copy(img.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            if (!ObjectUtils.isEmpty(dbUser)) {
+                dbUser.setName(user.getName());
+                dbUser.setMobileNumber(user.getMobileNumber());
+                dbUser.setAddress(user.getAddress());
+                dbUser.setCity(user.getCity());
+                dbUser.setState(user.getState());
+                dbUser.setPincode(user.getPincode());
+                dbUser = userRepository.save(dbUser);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error uploading profile image", e);
         }
 
         return dbUser;

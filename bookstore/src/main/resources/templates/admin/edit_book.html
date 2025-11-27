@@ -95,7 +95,7 @@
                 </div>
 
                 <div class="mt-1">
-                  <img th:src="@{'/img/book_img/'+${book.image}}"
+                  <img th:src="${@commonUtil.getImageUrl(book.image)}"
                        width="100px" height="100px">
                 </div>
 

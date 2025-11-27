@@ -28,7 +28,7 @@
             <!-- Book Image -->
             <div class="col-lg-5">
                 <div style="border-radius: 8px; overflow: hidden; background: #f8f9fa; padding: 2rem; text-align: center;">
-                    <img alt="Book Cover" th:src="@{'/img/book_img/'+${book.image}}" 
+                    <img alt="Book Cover" th:src="${@commonUtil.getImageUrl(book.image)}" 
                          class="img-fluid" style="max-height: 400px; object-fit: contain;">
                 </div>
             </div>

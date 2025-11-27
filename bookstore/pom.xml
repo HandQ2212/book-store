@@ -75,6 +75,20 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-websocket</artifactId>
 	</dependency>
+
+	<!-- Cloudinary for Image Storage -->
+	<dependency>
+		<groupId>com.cloudinary</groupId>
+		<artifactId>cloudinary-http44</artifactId>
+		<version>1.33.0</version>
+	</dependency>
+
+	<!-- DotEnv for loading .env file -->
+	<dependency>
+		<groupId>io.github.cdimascio</groupId>
+		<artifactId>dotenv-java</artifactId>
+		<version>3.0.0</version>
+	</dependency>
 	</dependencies>
 
 	<build>
