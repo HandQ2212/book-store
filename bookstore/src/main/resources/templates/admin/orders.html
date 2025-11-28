@@ -14,16 +14,22 @@
             <a href="/admin/" class="text-decoration-none"><i
                     class="fa-solid fa-arrow-left"></i> Back</a>
             <th:block th:if="${session.succMsg}">
-                <p class="text-success fw-bold text-center">[[${session.succMsg}]]</p>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> [[${session.succMsg}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
             </th:block>
 
             <th:block th:if="${session.errorMsg}">
-                <p class="text-danger fw-bold text-center">[[${session.errorMsg}]]</p>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> [[${session.errorMsg}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
             </th:block>
+            
             <div class="col-md-4 p-4">
-
                 <form action="/admin/search-order" method="get">
                     <div class="row">
                         <div class="col">
@@ -35,8 +41,33 @@
                         </div>
                     </div>
                 </form>
-
             </div>
+            
+            <div class="col-md-8 p-4">
+                <form action="/admin/orders" method="get">
+                    <div class="row">
+                        <div class="col">
+                            <select name="status" class="form-select">
+                                <option value="">All Orders</option>
+                                <option value="In Progress" th:selected="${param.status != null && param.status[0] == 'In Progress'}">In Progress</option>
+                                <option value="Order Received" th:selected="${param.status != null && param.status[0] == 'Order Received'}">Order Received</option>
+                                <option value="Book Packed" th:selected="${param.status != null && param.status[0] == 'Book Packed'}">Book Packed</option>
+                                <option value="Out for Delivery" th:selected="${param.status != null && param.status[0] == 'Out for Delivery'}">Out for Delivery</option>
+                                <option value="Delivered" th:selected="${param.status != null && param.status[0] == 'Delivered'}">Delivered</option>
+                                <option value="Cancelled" th:selected="${param.status != null && param.status[0] == 'Cancelled'}">Cancelled</option>
+                                <option value="Success" th:selected="${param.status != null && param.status[0] == 'Success'}">Success</option>
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-success" type="submit">Filter</button>
+                        </div>
+                        <div class="col-auto">
+                            <a href="/admin/orders" class="btn btn-secondary">Clear</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             <div class="col-md-12 ps-4 pe-4">
 
                 <table class="table table-bordered card-sh">

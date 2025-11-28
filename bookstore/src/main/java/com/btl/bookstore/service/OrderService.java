@@ -19,4 +19,6 @@ public interface OrderService {
     public BookOrder getOrdersByOrderId(String orderId);
 
     public Page<BookOrder> getAllOrdersPagination(Integer pageNo, Integer pageSize);
+    
+    public Page<BookOrder> getOrdersByStatusPagination(String status, Integer pageNo, Integer pageSize);
 }

@@ -2,6 +2,7 @@ package com.btl.bookstore.service.impl;
 
 import com.btl.bookstore.model.Book;
 import com.btl.bookstore.repository.BookRepository;
+import com.btl.bookstore.repository.BookOrderRepository;
 import com.btl.bookstore.service.BookService;
 import com.btl.bookstore.service.CloudinaryService;
 import org.slf4j.Logger;
@@ -23,6 +24,9 @@ public class BookServiceImpl implements BookService {
 
     @Autowired
     private BookRepository bookRepository;
+    
+    @Autowired
+    private BookOrderRepository bookOrderRepository;
 
     @Autowired
     private CloudinaryService cloudinaryService;
@@ -48,10 +52,14 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id).orElse(null);
 
         if (!ObjectUtils.isEmpty(book)) {
+            // Kiểm tra xem sách có trong đơn hàng chưa delivered không
+            if (bookOrderRepository.existsByBookIdAndNotDelivered(id)) {
+                return false; // Không thể xóa vì sách đang có trong đơn hàng chưa giao
+            }
             bookRepository.delete(book);
             return true;
         }
-        return  false;
+        return false;
     }
 
     @Override

@@ -14,12 +14,18 @@
                     <div class="card-header text-center ">
                         <p class="fs-4">Edit Category</p>
                         <th:block th:if="${session.succMsg}">
-                            <p class="text-success fw-bold">[[${session.succMsg}]]</p>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle"></i> [[${session.succMsg}]]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
                             <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
                         </th:block>
 
                         <th:block th:if="${session.errorMsg}">
-                            <p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle"></i> [[${session.errorMsg}]]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
                             <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
                         </th:block>
 

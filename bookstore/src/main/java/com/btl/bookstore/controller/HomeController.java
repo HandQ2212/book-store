@@ -127,13 +127,6 @@ public class HomeController {
 
     @GetMapping("/book/{id}")
     public String book(@PathVariable int id, Model m, Principal principal) {
-        if (principal != null) {
-            UserDtls user = userService.getUserByEmail(principal.getName());
-            if (user != null && "ROLE_ADMIN".equals(user.getRole())) {
-                return "redirect:/admin/books";
-            }
-        }
-        
         Book bookById = bookService.getBookById(id);
         m.addAttribute("book", bookById);
         return "view_book";

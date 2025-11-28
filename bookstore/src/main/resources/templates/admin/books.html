@@ -14,12 +14,18 @@
             <a href="/admin/" class="text-decoration-none"><i
                     class="fa-solid fa-arrow-left"></i> Back</a>
             <th:block th:if="${session.succMsg}">
-                <p class="text-success fw-bold">[[${session.succMsg}]]</p>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> [[${session.succMsg}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
             </th:block>
 
             <th:block th:if="${session.errorMsg}">
-                <p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> [[${session.errorMsg}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
             </th:block>
 
@@ -78,12 +84,14 @@
                         <td>[[${#numbers.formatInteger(p.discountPrice,0)}]]</td>
                         <td>[[${p.isActive}]]</td>
                         <td>[[${p.stock}]]</td>
-                        <td><a th:href="@{'/admin/editBook/'+${p.id}}"
-                               class="btn btn-sm btn-primary"><i
-                                class="fa-solid fa-pen-to-square"></i>Edit</a> <a
-                                th:href="@{'/admin/deleteBook/'+${p.id}}"
-                                class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i>
-                            Delete</a></td>
+                        <td>
+                            <a th:href="@{'/admin/editBook/'+${p.id}}" class="btn btn-sm btn-primary me-1">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                            </a>
+                            <a th:href="@{'/admin/deleteBook/'+${p.id}}" class="btn btn-sm btn-danger">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </a>
+                        </td>
                     </tr>
 
                     </tbody>

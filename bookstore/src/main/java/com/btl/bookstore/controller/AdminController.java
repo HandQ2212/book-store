@@ -252,9 +252,9 @@ public class AdminController {
     public String deleteBook(@PathVariable int id, HttpSession session) {
         Boolean deleteBook = bookService.deleteBook(id);
         if (deleteBook) {
-            session.setAttribute("succMsg", "Book delete success");
+            session.setAttribute("succMsg", "Book deleted successfully");
         } else {
-            session.setAttribute("errorMsg", "Something wrong on server");
+            session.setAttribute("errorMsg", "Cannot delete book. This book has active orders (not delivered or cancelled yet).");
         }
         return "redirect:/admin/books";
     }
@@ -308,8 +308,16 @@ public class AdminController {
 
     @GetMapping("/orders")
     public String getAllOrders(Model m, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
-                               @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        Page<BookOrder> page = orderService.getAllOrdersPagination(pageNo, pageSize);
+                               @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                               @RequestParam(name = "status", required = false) String status) {
+        Page<BookOrder> page;
+        
+        if (status != null && !status.trim().isEmpty()) {
+            page = orderService.getOrdersByStatusPagination(status, pageNo, pageSize);
+        } else {
+            page = orderService.getAllOrdersPagination(pageNo, pageSize);
+        }
+        
         m.addAttribute("orders", page.getContent());
         m.addAttribute("srch", false);
         m.addAttribute("pageNo", page.getNumber());

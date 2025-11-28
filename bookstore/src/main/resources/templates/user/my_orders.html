@@ -11,12 +11,18 @@
         <div class="row">
             <p class="text-center fs-3">My Orders</p>
             <th:block th:if="${session.succMsg}">
-                <p class="text-success fw-bold text-center">[[${session.succMsg}]]</p>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle"></i> [[${session.succMsg}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
             </th:block>
 
             <th:block th:if="${session.errorMsg}">
-                <p class="text-danger fw-bold text-center">[[${session.errorMsg}]]</p>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle"></i> [[${session.errorMsg}]]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <th:block th:text="${@commonServiceImpl.removeSessionMessage()}"></th:block>
             </th:block>
             <div class="col-md-12 ">

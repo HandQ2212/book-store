@@ -151,6 +151,13 @@ public class OrderServiceImpl implements OrderService {
     public BookOrder getOrdersByOrderId(String orderId) {
         return orderRepository.findByOrderId(orderId);
     }
+    
+    @Override
+    public Page<BookOrder> getOrdersByStatusPagination(String status, Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return orderRepository.findByStatus(status, pageable);
+    }
 
 }
+
 
