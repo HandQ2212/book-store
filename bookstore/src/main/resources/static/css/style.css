@@ -663,6 +663,7 @@ footer a:hover {
     transition: all 0.3s ease;
     background: #ffffff;
     overflow: hidden;
+    position: relative;
 }
 
 .book-card:hover {
@@ -716,15 +717,38 @@ footer a:hover {
 .current-price {
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--primary-color);
+    color: #e74c3c;
     margin-bottom: 5px;
 }
 
 .original-price {
-    font-size: 0.9rem;
+    font-size: 1rem;
     text-decoration: line-through;
     color: #999;
-    margin-right: 8px;
+}
+
+.discount-badge-corner {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #92ec49, #3ab228);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(78, 203, 50, 0.4);
+    z-index: 10;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 .discount-badge {
