@@ -64,6 +64,14 @@
 
             </ul>
 
+            <!-- Search Bar -->
+            <form action="/books" method="get" class="d-flex mx-auto" role="search" style="width: 400px;">
+                <input type="text" class="form-control me-2" name="ch" placeholder="Search books...">
+                <button class="btn btn-outline-light" type="submit">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <th:block th:if="${user==null}">
                     <li class="nav-item"><a class="nav-link active"
