@@ -117,6 +117,14 @@
                         <i class="fas fa-ban me-2"></i> Out of Stock
                     </button>
                 </th:block>
+
+                <!-- Admin Edit Button -->
+                <th:block th:if="${user!=null && user.role=='ROLE_ADMIN'}">
+                    <a th:href="@{'/admin/editBook/'+${book.id}}"
+                       class="btn btn-warning btn-lg w-100 fw-bold mt-3">
+                        <i class="fas fa-edit me-2"></i> Edit Book
+                    </a>
+                </th:block>
             </div>
         </div>
     </div>
