@@ -247,4 +247,14 @@ public class HomeController {
         return "book";
     }
 
+    @GetMapping("/api/search-suggestions")
+    @ResponseBody
+    public List<Book> getSearchSuggestions(@RequestParam String query) {
+        if (query == null || query.trim().length() < 2) {
+            return List.of();
+        }
+        List<Book> books = bookService.searchBook(query.trim());
+        return books.stream().limit(10).toList();
+    }
+
 }
