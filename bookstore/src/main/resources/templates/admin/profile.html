@@ -38,7 +38,7 @@
             </div>
 
             <!-- Form -->
-            <form action="/admin/update-profile" method="post" enctype="multipart/form-data">
+            <form action="/admin/update-profile" method="post" enctype="multipart/form-data" accept-charset="UTF-8">
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label class="form-label fw-600"><i class="fas fa-user text-secondary me-2"></i>Name</label>
@@ -63,11 +63,11 @@
               <div class="row">
                 <div class="col-md-4 mb-3">
                   <label class="form-label fw-600"><i class="fas fa-city text-secondary me-2"></i>City</label>
-                  <input type="text" name="city" class="form-control" th:value="${user.city}">
+                  <input type="text" name="city" class="form-control" th:value="${user.city}" placeholder="Hà Nội">
                 </div>
                 <div class="col-md-4 mb-3">
-                  <label class="form-label fw-600"><i class="fas fa-map text-secondary me-2"></i>State</label>
-                  <input type="text" name="state" class="form-control" th:value="${user.state}">
+                  <label class="form-label fw-600"><i class="fas fa-map text-secondary me-2"></i>Country</label>
+                  <input type="text" name="state" class="form-control" th:value="${user.state}" placeholder="Việt Nam">
                 </div>
                 <div class="col-md-4 mb-3">
                   <label class="form-label fw-600"><i class="fas fa-mailbox text-secondary me-2"></i>Pincode</label>

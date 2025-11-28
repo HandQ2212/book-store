@@ -9,7 +9,7 @@
 <section>
 
     <div class="container mt-5 p-5">
-        <form action="/user/save-order" method="post" id="orders" novalidate>
+        <form action="/user/save-order" method="post" id="orders" accept-charset="UTF-8" novalidate>
             <div class="row">
 
                 <div class="col-md-6">
@@ -20,7 +20,7 @@
                         <hr>
                         <div class="col-12 p-1">
                             <label>Name</label> <input type="text" name="firstName" required
-                                                       class="form-control mt-1" th:value="${user.name}">
+                                                       class="form-control mt-1" th:value="${user.name}" placeholder="Nguyễn Văn A">
                         </div>
                     </div>
 
@@ -42,17 +42,17 @@
                         </div>
                         <div class="col p-1">
                             <label>City</label> <input type="text" name="city" required
-                                                       class="form-control col ms-2" th:value="${user.city}">
+                                                       class="form-control col ms-2" th:value="${user.city}" placeholder="Hà Nội, TP Hồ Chí Minh...">
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <div class="col p-1">
-                            <label>State</label> <input type="text" name="state" required
-                                                        class="form-control col" th:value="${user.state}">
+                            <label>Quốc Gia</label> <input type="text" name="state" required
+                                                        class="form-control col" th:value="${user.state}" placeholder="Việt Nam">
                         </div>
                         <div class="col p-1">
-                            <label>Pincode</label> <input type="number" name="pincode" required
-                                                          class="form-control col ms-2" th:value="${user.pincode}">
+                            <label>Pincode</label> <input type="text" name="pincode" required
+                                                          class="form-control col ms-2" th:value="${user.pincode}" placeholder="Nhập mã bưu điện">
                         </div>
                     </div>
                     <!-- </form> -->

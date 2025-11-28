@@ -45,6 +45,9 @@ public class OrderServiceImpl implements OrderService {
     public void saveOrder(Integer userid, OrderRequest orderRequest) throws Exception {
 
         List<Cart> carts = cartRepository.findByUserId(userid);
+        List<BookOrder> ordersList = new java.util.ArrayList<>();
+        OrderAddress sharedAddress = null;
+        String paymentType = orderRequest.getPaymentType();
 
         for (Cart cart : carts) {
             
@@ -65,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
             order.setUser(cart.getUser());
 
             order.setStatus(OrderStatus.IN_PROGRESS.getName());
-            order.setPaymentType(orderRequest.getPaymentType());
+            order.setPaymentType(paymentType);
 
             OrderAddress address = new OrderAddress();
             address.setFirstName(orderRequest.getFirstName());
@@ -78,16 +81,24 @@ public class OrderServiceImpl implements OrderService {
             address.setPincode(orderRequest.getPincode());
 
             order.setOrderAddress(address);
+            
+            if (sharedAddress == null) {
+                sharedAddress = address;
+            }
 
             BookOrder saveOrder = orderRepository.save(order);
+            ordersList.add(saveOrder);
             
             // Reduce stock after successful order
             Book book = cart.getBook();
             int newStock = book.getStock() - cart.getQuantity();
             book.setStock(newStock);
             bookRepository.save(book);
-            
-            commonUtil.sendMailForBookOrder(saveOrder, "success");
+        }
+        
+        // Gửi 1 mail duy nhất với tất cả đơn hàng
+        if (!ordersList.isEmpty()) {
+            commonUtil.sendMailForMultipleOrders(ordersList, sharedAddress, paymentType, "success");
         }
         
         // Xóa cart sau khi đặt hàng (chỉ xóa items đã được chọn)

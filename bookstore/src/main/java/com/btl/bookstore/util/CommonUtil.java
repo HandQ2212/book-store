@@ -3,6 +3,7 @@ package com.btl.bookstore.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 import com.btl.bookstore.model.BookOrder;
+import com.btl.bookstore.model.OrderAddress;
 import com.btl.bookstore.model.UserDtls;
 import com.btl.bookstore.service.UserService;
 
@@ -105,6 +107,108 @@ public class CommonUtil {
 
         helper.setSubject("Book Order Status Update");
         helper.setText(msg, true);
+        mailSender.send(message);
+        return true;
+    }
+
+    public Boolean sendMailForMultipleOrders(List<BookOrder> orders, OrderAddress address, String paymentType, String status) throws Exception {
+        if (orders == null || orders.isEmpty()) {
+            return false;
+        }
+
+        // Calculate totals
+        Double subtotal = 0.0;
+        Double shippingFee = 2500.0; // Phí vận chuyển
+        
+        // Build books table rows
+        StringBuilder booksRows = new StringBuilder();
+        for (BookOrder order : orders) {
+            Double itemTotal = order.getPrice() * order.getQuantity();
+            subtotal += itemTotal;
+            
+            booksRows.append("<tr>")
+                    .append("<td style=\"padding: 8px; border-bottom: 1px solid #ddd;\">").append(order.getBook().getTitle()).append("</td>")
+                    .append("<td style=\"padding: 8px; border-bottom: 1px solid #ddd;\">").append(order.getBook().getCategory()).append("</td>")
+                    .append("<td style=\"padding: 8px; border-bottom: 1px solid #ddd; text-align: center;\">").append(order.getQuantity()).append("</td>")
+                    .append("<td style=\"padding: 8px; border-bottom: 1px solid #ddd; text-align: right;\">").append(String.format("%,.0f", order.getPrice())).append(" đồng</td>")
+                    .append("<td style=\"padding: 8px; border-bottom: 1px solid #ddd; text-align: right;\">").append(String.format("%,.0f", itemTotal)).append(" đồng</td>")
+                    .append("</tr>");
+        }
+        
+        Double taxAmount = subtotal * 0.05; // Thuế 5%
+        Double totalAmount = subtotal + shippingFee + taxAmount;
+        
+        // Build full name
+        String fullName = address.getFirstName();
+        if (address.getLastName() != null && !address.getLastName().trim().isEmpty()) {
+            fullName += " " + address.getLastName();
+        }
+
+        String emailMsg = "<div style=\"font-family: Arial, sans-serif; max-width: 650px; margin: 0 auto; padding: 20px; background-color: #ffffff;\">"
+                + "<h2 style=\"color: #333; margin-bottom: 20px;\">Order Confirmation</h2>"
+                + "<p>Hello <b>" + fullName + "</b>,</p>"
+                + "<p>Thank you for your order. Order status: <b>" + status.toUpperCase() + "</b></p>"
+                
+                + "<h3 style=\"color: #333; margin-top: 25px; margin-bottom: 15px;\">Order Details</h3>"
+                + "<table style=\"border-collapse: collapse; width: 100%; margin-bottom: 20px;\">"
+                + "<thead>"
+                + "<tr style=\"background-color: #f5f5f5;\">"
+                + "<th style=\"padding: 10px 8px; border-bottom: 2px solid #ddd; text-align: left;\">Book Title</th>"
+                + "<th style=\"padding: 10px 8px; border-bottom: 2px solid #ddd; text-align: left;\">Category</th>"
+                + "<th style=\"padding: 10px 8px; border-bottom: 2px solid #ddd; text-align: center;\">Quantity</th>"
+                + "<th style=\"padding: 10px 8px; border-bottom: 2px solid #ddd; text-align: right;\">Unit Price</th>"
+                + "<th style=\"padding: 10px 8px; border-bottom: 2px solid #ddd; text-align: right;\">Total</th>"
+                + "</tr>"
+                + "</thead>"
+                + "<tbody>"
+                + booksRows.toString()
+                + "</tbody>"
+                + "</table>"
+                
+                + "<h3 style=\"color: #333; margin-top: 25px; margin-bottom: 15px;\">Payment Summary</h3>"
+                + "<table style=\"width: 100%; margin-bottom: 20px;\">"
+                + "<tr>"
+                + "<td style=\"padding: 8px 0; border-bottom: 1px solid #eee;\">Subtotal</td>"
+                + "<td style=\"padding: 8px 0; border-bottom: 1px solid #eee; text-align: right;\">" + String.format("%,.0f", subtotal) + " đồng</td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td style=\"padding: 8px 0; border-bottom: 1px solid #eee;\">Shipping Fee</td>"
+                + "<td style=\"padding: 8px 0; border-bottom: 1px solid #eee; text-align: right;\">" + String.format("%,.0f", shippingFee) + " đồng</td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td style=\"padding: 8px 0; border-bottom: 1px solid #eee;\">Tax (5%)</td>"
+                + "<td style=\"padding: 8px 0; border-bottom: 1px solid #eee; text-align: right;\">" + String.format("%,.0f", taxAmount) + " đồng</td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td style=\"padding: 12px 0 8px 0; border-top: 2px solid #333; font-size: 16px;\"><b>TOTAL AMOUNT</b></td>"
+                + "<td style=\"padding: 12px 0 8px 0; border-top: 2px solid #333; text-align: right; font-size: 18px;\"><b>" + String.format("%,.0f", totalAmount) + " đồng</b></td>"
+                + "</tr>"
+                + "<tr>"
+                + "<td style=\"padding: 8px 0; border-bottom: 1px solid #eee;\">Payment Method</td>"
+                + "<td style=\"padding: 8px 0; border-bottom: 1px solid #eee; text-align: right;\">" + paymentType + "</td>"
+                + "</tr>"
+                + "</table>"
+                
+                + "<h3 style=\"color: #333; margin-top: 25px; margin-bottom: 15px;\">Shipping Address</h3>"
+                + "<div style=\"background-color: #f9f9f9; padding: 15px; margin-bottom: 20px;\">"
+                + "<p style=\"margin: 5px 0;\"><b>Name:</b> " + fullName + "</p>"
+                + "<p style=\"margin: 5px 0;\"><b>Email:</b> " + address.getEmail() + "</p>"
+                + "<p style=\"margin: 5px 0;\"><b>Phone:</b> " + address.getMobileNo() + "</p>"
+                + "<p style=\"margin: 5px 0;\"><b>Address:</b> " + address.getAddress() + ", " + address.getCity() + ", " + address.getState() + " - " + address.getPincode() + "</p>"
+                + "</div>"
+                
+                + "<p style=\"color: #666; font-size: 14px; margin-top: 30px;\">Thank you for shopping with Book Store!</p>"
+                + "<p style=\"color: #999; font-size: 12px;\">If you have any questions, please contact our customer support.</p>"
+                + "</div>";
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(mailUsername, "Book Store");
+        helper.setTo(address.getEmail());
+        helper.setSubject("Order Confirmation - Book Store");
+        helper.setText(emailMsg, true);
+        
         mailSender.send(message);
         return true;
     }

@@ -8,8 +8,7 @@ $(function(){
 
 		rules:{
 			name:{
-				required:true,
-				lettersonly:true
+				required:true
 			}
 			,
 			email: {
@@ -35,28 +34,20 @@ $(function(){
 				space: true,
 				equalTo: '#pass'
 
-			},
-			address: {
-				required: true,
-				all: true
 
-			},
+		},
+		address: {
+			required: true
 
+		},
 			city: {
-				required: true,
-				space: true
-
+				required: true
 			},
 			state: {
-				required: true,
-
-
+				required: true
 			},
 			pincode: {
-				required: true,
-				space: true,
-				numericOnly: true
-
+				required: true
 			}, img: {
 				required: true,
 			}
@@ -64,8 +55,7 @@ $(function(){
 		},
 		messages:{
 			name:{
-				required:'name required',
-				lettersonly:'invalid name'
+				required:'Tên không được để trống'
 			},
 			email: {
 				required: 'email name must be required',
@@ -92,26 +82,17 @@ $(function(){
 
 			},
 			address: {
-				required: 'address must be required',
-				all: 'invalid'
-
+				required: 'Địa chỉ không được để trống'
 			},
 
 			city: {
-				required: 'city must be required',
-				space: 'space not allowed'
-
+				required: 'Thành phố không được để trống'
 			},
 			state: {
-				required: 'state must be required',
-				space: 'space not allowed'
-
+				required: 'Quốc gia không được để trống'
 			},
 			pincode: {
-				required: 'pincode must be required',
-				space: 'space not allowed',
-				numericOnly: 'invalid pincode'
-
+				required: 'Mã bưu điện không được để trống'
 			},
 			img: {
 				required: 'image required',
@@ -127,12 +108,10 @@ var $orders=$("#orders");
 $orders.validate({
 		rules:{
 			firstName:{
-				required:true,
-				lettersonly:true
+				required:true
 			},
 			lastName:{
-				required:true,
-				lettersonly:true
+				required:true
 			}
 			,
 			email: {
@@ -149,23 +128,17 @@ $orders.validate({
 
 			},
 			address: {
-				required: true,
-				all: true
-
+				required: true
 			},
 
 			city: {
-				required: true,
-				all: true
+				required: true
 			},
 			state: {
-				required: true,
-				all: true
+				required: true
 			},
 			pincode: {
-				required: true,
-				space: true,
-				numericOnly: true
+				required: true
 			},
 			paymentType:{
 			required: true
@@ -194,22 +167,17 @@ $orders.validate({
 			}
 		   ,
 			address: {
-				required: 'address must be required',
-				all: 'invalid'
+				required: 'Địa chỉ không được để trống'
 			},
 
 			city: {
-				required: 'city must be required',
-				all: 'invalid'
+				required: 'Thành phố không được để trống'
 			},
 			state: {
-				required: 'state must be required',
-				all: 'invalid'
+				required: 'Quốc gia không được để trống'
 			},
 			pincode: {
-				required: 'pincode must be required',
-				space: 'space not allowed',
-				numericOnly: 'invalid pincode'
+				required: 'Mã bưu điện không được để trống'
 			},
 			paymentType:{
 			required: 'select payment type'

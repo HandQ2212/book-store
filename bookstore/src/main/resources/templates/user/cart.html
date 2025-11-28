@@ -71,7 +71,7 @@
             </a></td>
             <td>[[${cart.totalPrice}]]</td>
           </tr>
-          <tr>
+          <tr th:if="${carts.size() > 0}">
             <td colspan="5"></td>
             <td class="fw-bold">Total Cart Price</td>
             <td class="fw-bold"><span id="totalPrice">[[${#numbers.formatInteger(totalOrderPrice,0)}]]</span><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
@@ -79,7 +79,7 @@
 
           </tbody>
         </table>
-        <div class="text-center">
+        <div class="text-center" th:if="${carts.size() > 0}">
           <button id="proceedBtn" class="btn btn-warning" onclick="return saveSelectedItems()" th:disabled="${carts.size() == 0}">
             Proceed Payment
           </button>
