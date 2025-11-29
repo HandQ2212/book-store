@@ -10,6 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/*
+Entity đại diện cho sách
+Chứa thông tin về tên, giá, mô tả, tồn kho và giảm giá
+*/
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -22,24 +26,24 @@ public class Book {
     private Integer id;
 
     @Column(length = 500)
-    private String title;
+    private String title; // Tên sách
 
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String description; // Mô tả
 
     @Column(length = 255)
-    private String category;
+    private String category; // Danh mục
 
-    private Double price;
+    private Double price; // Giá gốc
 
-    private int stock;
+    private int stock; // Số lượng tồn
 
-    private String image;
+    private String image; // Link ảnh
 
-    private int discount;
+    private int discount; // % giảm giá
 
-    private Double discountPrice;
+    private Double discountPrice; // Giá sau giảm
 
-    private Boolean isActive;
+    private Boolean isActive; // Trạng thái
 
 }

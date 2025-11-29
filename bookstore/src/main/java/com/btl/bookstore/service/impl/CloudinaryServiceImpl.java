@@ -12,6 +12,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Map;
 
+/*
+Service tích hợp Cloudinary để quản lý ảnh
+Tải lên và xóa ảnh trên Cloudinary
+*/
 @Service
 public class CloudinaryServiceImpl implements CloudinaryService {
 
@@ -28,6 +32,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
     private Cloudinary cloudinary;
 
+    // Lấy instance Cloudinary (Lazy init)
     private Cloudinary getCloudinary() {
         if (cloudinary == null) {
             cloudinary = new Cloudinary(ObjectUtils.asMap(
@@ -39,10 +44,11 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         return cloudinary;
     }
 
+    // Tải ảnh lên Cloudinary
     @Override
     public String uploadImage(MultipartFile file, String folder) throws Exception {
         try {
-            logger.info("Uploading image: {} to folder: {}", file.getOriginalFilename(), folder);
+            logger.info("Tải ảnh lên: {} vào thư mục: {}", file.getOriginalFilename(), folder);
             
             Map uploadResult = getCloudinary().uploader().upload(
                     file.getBytes(),
@@ -57,26 +63,27 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             String imageUrl = (String) uploadResult.get("secure_url");
             String publicId = (String) uploadResult.get("public_id");
             
-            logger.info("Image uploaded successfully. URL: {}, PublicId: {}", imageUrl, publicId);
+            logger.info("Ảnh đã tải lên thành công. URL: {}, PublicId: {}", imageUrl, publicId);
             return imageUrl;
         } catch (IOException e) {
-            logger.error("Error uploading image to Cloudinary", e);
-            throw new Exception("Failed to upload image to Cloudinary", e);
+            logger.error("Lỗi khi tải ảnh lên Cloudinary", e);
+            throw new Exception("Không thể tải ảnh lên Cloudinary", e);
         }
     }
 
+    // Xóa ảnh khỏi Cloudinary
     @Override
     public void deleteImage(String publicId) throws Exception {
         try {
             if (publicId == null || publicId.isEmpty()) {
                 return;
             }
-            logger.info("Deleting image: {}", publicId);
+            logger.info("Xóa ảnh: {}", publicId);
             getCloudinary().uploader().destroy(publicId, ObjectUtils.emptyMap());
-            logger.info("Image deleted successfully");
+            logger.info("Ảnh đã được xóa thành công");
         } catch (IOException e) {
-            logger.error("Error deleting image from Cloudinary", e);
-            throw new Exception("Failed to delete image from Cloudinary", e);
+            logger.error("Lỗi khi xóa ảnh từ Cloudinary", e);
+            throw new Exception("Không thể xóa ảnh từ Cloudinary", e);
         }
     }
 }

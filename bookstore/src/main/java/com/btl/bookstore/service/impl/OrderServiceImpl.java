@@ -51,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
 
         for (Cart cart : carts) {
             
-            // Chỉ tạo đơn hàng cho những items được chọn
+            // Chỉ tạo đơn hàng cho những mục được chọn
             if (cart.getSelected() == null || !cart.getSelected()) {
                 continue;
             }
@@ -89,14 +89,14 @@ public class OrderServiceImpl implements OrderService {
             BookOrder saveOrder = orderRepository.save(order);
             ordersList.add(saveOrder);
             
-            // Reduce stock after successful order
+            // Giảm số lượng tồn kho sau khi đặt hàng thành công
             Book book = cart.getBook();
             int newStock = book.getStock() - cart.getQuantity();
             book.setStock(newStock);
             bookRepository.save(book);
         }
         
-        // Gửi 1 mail duy nhất với tất cả đơn hàng
+        // Gửi một email duy nhất với tất cả đơn hàng
         if (!ordersList.isEmpty()) {
             commonUtil.sendMailForMultipleOrders(ordersList, sharedAddress, paymentType, "success");
         }

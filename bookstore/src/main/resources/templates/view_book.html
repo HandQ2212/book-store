@@ -68,9 +68,9 @@
                     <p class="text-secondary mb-2 fw-600"><i class="fas fa-price-tag me-2"></i>Price</p>
                     <div class="d-flex align-items-baseline gap-2">
                         <span class="fs-4 fw-bold" style="color: var(--primary-color);">
-                            [[${@commonUtil.formatPrice(book.discountPrice)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
+                            [[${@commonUtil.formatPrice(book.discountPrice)}]]đ
                         </span>
-                        <span class="fs-6 text-decoration-line-through text-secondary">[[${@commonUtil.formatPrice(book.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></span>
+                        <span class="fs-6 text-decoration-line-through text-secondary">[[${@commonUtil.formatPrice(book.price)}]]đ</span>
                         <span class="badge" style="background-color: var(--accent-color);">[[${book.discount}]]% OFF</span>
                     </div>
                 </div>

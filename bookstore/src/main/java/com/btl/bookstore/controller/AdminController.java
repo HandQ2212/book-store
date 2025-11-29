@@ -25,6 +25,10 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
+/*
+Controller cho admin
+Quản lý sách, danh mục, user và đơn hàng
+*/
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -84,7 +88,6 @@ public class AdminController {
     @GetMapping("/category")
     public String category(Model m, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
                            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
-        // m.addAttribute("categorys", categoryService.getAllCategory());
         Page<Category> page = categoryService.getAllCategoryPagination(pageNo, pageSize);
         List<Category> categorys = page.getContent();
         m.addAttribute("categorys", categorys);

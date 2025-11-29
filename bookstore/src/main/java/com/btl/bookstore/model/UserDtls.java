@@ -13,6 +13,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/*
+Entity đại diện cho user
+Chứa thông tin cá nhân, địa chỉ, xác thực và bảo mật
+*/
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -25,28 +29,28 @@ public class UserDtls {
     private Integer id;
 
     @Column(length = 255)
-    private String name;
+    private String name; // Tên
 
-    private String mobileNumber;
+    private String mobileNumber; // SĐT
 
-    private String email;
+    private String email; // Email
 
     @Column(length = 500)
-    private String address;
+    private String address; // Địa chỉ
 
     @Column(length = 255)
-    private String city;
+    private String city; // Thành phố
 
     @Column(length = 255)
-    private String state;
+    private String state; // Tỉnh
 
-    private String pincode;
+    private String pincode; // Mã bưu điện
 
-    private String password;
+    private String password; // Mật khẩu mã hóa
 
-    private String profileImage;
+    private String profileImage; // Ảnh đại diện
 
-    private String role;
+    private String role; // Vai trò (USER/ADMIN)
 
     private Boolean isEnable;
 

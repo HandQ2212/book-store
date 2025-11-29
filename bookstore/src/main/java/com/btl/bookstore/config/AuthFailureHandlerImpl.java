@@ -19,6 +19,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/*
+    Handler xử lý khi đăng nhập thất bại
+    Đếm số lần sai và khóa tài khoản nếu quá giới hạn
+ */
 @Component
 public class AuthFailureHandlerImpl extends SimpleUrlAuthenticationFailureHandler {
 
@@ -28,6 +32,10 @@ public class AuthFailureHandlerImpl extends SimpleUrlAuthenticationFailureHandle
     @Autowired
     private UserService userService;
 
+    /*
+        Xử lý khi đăng nhập thất bại
+        Kiểm tra số lần đăng nhập sai và khóa tài khoản nếu vượt quá giới hạn
+     */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {

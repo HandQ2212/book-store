@@ -32,6 +32,10 @@ import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
+/*
+Controller xử lý các trang công khai
+Quản lý trang chủ, danh sách sách, đăng ký user và quên mật khẩu
+*/
 @Controller
 public class HomeController {
 
@@ -58,6 +62,7 @@ public class HomeController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    // Lấy thông tin user đã đăng nhập và số lượng giỏ hàng
     @ModelAttribute
     public void getUserDetails(Principal p, Model m) {
         if (p != null) {

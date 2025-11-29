@@ -112,7 +112,7 @@
               <small class="text-muted">Stock: [[${cart.book.stock}]]</small>
               <span th:if="${cart.quantity > cart.book.stock}" class="badge bg-danger ms-2">Không đủ hàng!</span>
             </td>
-            <td>[[${@commonUtil.formatPrice(cart.book.discountPrice)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+            <td>[[${@commonUtil.formatPrice(cart.book.discountPrice)}]]đ</td>
             <td class="text-center">
               <div class="d-flex align-items-center justify-content-center gap-2">
                 <button class="btn btn-sm btn-outline-secondary" 
@@ -139,12 +139,12 @@
                 </button>
               </div>
             </td>
-            <td><span th:id="'total-' + ${cart.id}">[[${@commonUtil.formatPrice(cart.totalPrice)}]]</span><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+            <td><span th:id="'total-' + ${cart.id}">[[${@commonUtil.formatPrice(cart.totalPrice)}]]</span>đ</td>
           </tr>
           <tr th:if="${carts.size() > 0}">
             <td colspan="5"></td>
             <td class="fw-bold">Total Cart Price</td>
-            <td class="fw-bold"><span id="totalPrice">[[${@commonUtil.formatPrice(totalOrderPrice)}]]</span><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+            <td class="fw-bold"><span id="totalPrice">[[${@commonUtil.formatPrice(totalOrderPrice)}]]</span>đ</td>
           </tr>
 
           </tbody>

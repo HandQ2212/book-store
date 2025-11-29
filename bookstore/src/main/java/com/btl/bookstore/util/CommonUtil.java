@@ -20,6 +20,10 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 
+/*
+Class chứa các hàm tiện ích chung
+Gửi email, tạo URL, format giá tiền
+*/
 @Component
 public class CommonUtil {
 
@@ -32,6 +36,7 @@ public class CommonUtil {
     @Value("${spring.mail.username}")
     private String mailUsername;
 
+    // Gửi email reset mật khẩu
     public Boolean sendMail(String url, String reciepentEmail) throws UnsupportedEncodingException, MessagingException {
 
         MimeMessage message = mailSender.createMimeMessage();
@@ -52,6 +57,7 @@ public class CommonUtil {
         return true;
     }
 
+    // Gửi email xác thực tài khoản mới
     public Boolean sendVerificationMail(String url, String recipientEmail, String userName) throws UnsupportedEncodingException, MessagingException {
         
         MimeMessage message = mailSender.createMimeMessage();
@@ -72,6 +78,7 @@ public class CommonUtil {
         return true;
     }
 
+    // Tạo base URL từ request
     public static String generateUrl(HttpServletRequest request) {
 
         String siteUrl = request.getRequestURL().toString();
@@ -79,6 +86,7 @@ public class CommonUtil {
         return siteUrl.replace(request.getServletPath(), "");
     }
 
+    // Format giá tiền với dấu phân cách hàng nghìn
     public static String formatPrice(Number price) {
         if (price == null) {
             return "0";

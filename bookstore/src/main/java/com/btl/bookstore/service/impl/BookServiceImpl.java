@@ -52,7 +52,7 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id).orElse(null);
 
         if (!ObjectUtils.isEmpty(book)) {
-            // Kiểm tra xem sách có trong đơn hàng chưa delivered không
+            // Kiểm tra xem sách có trong đơn hàng chưa giao không
             if (bookOrderRepository.existsByBookIdAndNotDelivered(id)) {
                 return false; // Không thể xóa vì sách đang có trong đơn hàng chưa giao
             }
@@ -82,13 +82,13 @@ public class BookServiceImpl implements BookService {
         dbBook.setIsActive(book.getIsActive());
         dbBook.setDiscount(book.getDiscount());
 
-        // 5=100*(5/100); 100-5=95
+        // Tính giá sau giảm: VD: 5% = 100 * (5/100); 100 - 5 = 95
         Double disocunt = book.getPrice() * (book.getDiscount() / 100.0);
         Double discountPrice = book.getPrice() - disocunt;
         dbBook.setDiscountPrice(discountPrice);
 
         if (!image.isEmpty()) {
-            // Delete old image from Cloudinary
+            // Xóa ảnh cũ từ Cloudinary
             if (imageName != null && !imageName.isEmpty() && imageName.startsWith("https")) {
                 try {
                     String publicId = extractPublicIdFromUrl(imageName, "books");
@@ -96,14 +96,14 @@ public class BookServiceImpl implements BookService {
                         cloudinaryService.deleteImage(publicId);
                     }
                 } catch (Exception e) {
-                    logger.warn("Failed to delete old book image", e);
+                    logger.warn("Không thể xóa ảnh sách cũ", e);
                 }
             }
-            // Upload new image
+            // Tải ảnh mới lên
             try {
                 imageName = cloudinaryService.uploadImage(image, "books");
             } catch (Exception e) {
-                logger.error("Error uploading book image", e);
+                logger.error("Lỗi khi tải ảnh sách lên", e);
             }
         }
 
@@ -135,7 +135,7 @@ public class BookServiceImpl implements BookService {
             if (url == null || !url.contains("cloudinary")) {
                 return null;
             }
-            // URL format: https://res.cloudinary.com/da4dr8ghb/image/upload/v1234567890/bookstore/books/public_id.ext
+            // Định dạng URL: https://res.cloudinary.com/da4dr8ghb/image/upload/v1234567890/bookstore/books/public_id.ext
             int lastSlashIndex = url.lastIndexOf('/');
             if (lastSlashIndex == -1) return null;
 
@@ -146,7 +146,7 @@ public class BookServiceImpl implements BookService {
             }
             return folder + "/" + fileNameWithExt;
         } catch (Exception e) {
-            logger.warn("Failed to extract public ID from URL: " + url, e);
+            logger.warn("Không thể trích xuất public ID từ URL: " + url, e);
             return null;
         }
     }

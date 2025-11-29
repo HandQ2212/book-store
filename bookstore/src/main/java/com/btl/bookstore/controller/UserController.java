@@ -22,6 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+Controller cho user
+Xử lý giỏ hàng, đặt hàng và quản lý profile
+*/
 @Controller
 @RequestMapping("/user")
 public class UserController {
@@ -88,6 +92,7 @@ public class UserController {
         return "user/cart";
     }
 
+    // Cập nhật các item được chọn trong giỏ hàng
     @PostMapping("/updateCartSelection")
     @ResponseBody
     public String updateCartSelection(@RequestBody List<Integer> selectedIds, Principal p) {
@@ -96,6 +101,7 @@ public class UserController {
         return "success";
     }
 
+    // Cập nhật số lượng sản phẩm trong giỏ hàng (tăng/giảm hoặc nhập trực tiếp)
     @GetMapping("/cartQuantityUpdate")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> updateCartQuantity(
@@ -107,10 +113,8 @@ public class UserController {
         try {
             Cart updatedCart;
             if (qty != null) {
-                // Cập nhật với số lượng cụ thể
                 updatedCart = cartService.updateQuantityDirect(cid, qty);
             } else if (sy != null) {
-                // Cập nhật với +/-
                 updatedCart = cartService.updateQuantity(sy, cid);
             } else {
                 response.put("success", false);
@@ -135,19 +139,18 @@ public class UserController {
         return userDtls;
     }
 
+    // Trang thanh toán - tính tổng tiền, phí ship, thuế
     @GetMapping("/orders")
     public String orderPage(Principal p, Model m) {
         UserDtls user = getLoggedInUserDetails(p);
         List<Cart> carts = cartService.getCartsByUser(user.getId());
         
-        // Lọc chỉ những items được chọn
         List<Cart> selectedCarts = carts.stream()
                 .filter(cart -> cart.getSelected() != null && cart.getSelected())
                 .toList();
         
         m.addAttribute("carts", selectedCarts);
         if (selectedCarts.size() > 0) {
-            // Tính tổng tiền chỉ từ items được chọn
             Double orderPrice = selectedCarts.stream()
                     .mapToDouble(cart -> cart.getTotalPrice())
                     .sum();

@@ -12,6 +12,10 @@ import com.btl.bookstore.service.ChatMessageService;
 
 import jakarta.transaction.Transactional;
 
+/*
+Service quản lý tin nhắn chat
+Lưu trữ, truy vấn và đánh dấu đã đọc
+*/
 @Service
 public class ChatMessageServiceImpl implements ChatMessageService {
 
@@ -59,7 +63,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public String createChatRoomId(Integer userId1, Integer userId2) {
-        // Always put smaller ID first for consistency
+        // Luôn đặt ID nhỏ hư trước để đảm bảo tính nhất quán
         return userId1 < userId2 ? userId1 + "_" + userId2 : userId2 + "_" + userId1;
     }
 }

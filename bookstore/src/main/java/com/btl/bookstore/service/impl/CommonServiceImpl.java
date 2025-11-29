@@ -9,12 +9,17 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+/*
+Service xử lý các chức năng chung
+Quản lý message session và định dạng tiền tệ
+*/
 @Service
 public class CommonServiceImpl implements CommonService {
 
-    @Value("${rupee.sign}")
-    public String rupeeSign;
+    @Value("${currency.sign}")
+    public String currencySign;
 
+    // Xóa message trong session (succMsg, errorMsg)
     @Override
     public void removeSessionMessage() {
         HttpServletRequest request = ((ServletRequestAttributes) (RequestContextHolder.getRequestAttributes()))
@@ -25,8 +30,7 @@ public class CommonServiceImpl implements CommonService {
     }
 
     @Override
-    public String rupeeSign()
-    {
-        return rupeeSign;
+    public String currencySign() {
+        return currencySign;
     }
 }

@@ -24,6 +24,10 @@ import com.btl.bookstore.model.UserDtls;
 import com.btl.bookstore.repository.UserRepository;
 import com.btl.bookstore.service.ChatMessageService;
 
+/*
+Controller xử lý chat realtime
+Quản lý tin nhắn giữa user và admin qua WebSocket
+*/
 @Controller
 public class ChatController {
 
@@ -36,11 +40,12 @@ public class ChatController {
     @Autowired
     private UserRepository userRepository;
 
+    // Xử lý tin nhắn chat qua WebSocket
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessage chatMessage) {
         ChatMessage saved = chatMessageService.save(chatMessage);
 
-        // Send notification to receiver
+        // Gửi thông báo cho người nhận
         ChatNotification notification = new ChatNotification();
         notification.setId(saved.getId());
         notification.setSenderId(saved.getSender().getId());
@@ -55,6 +60,7 @@ public class ChatController {
         );
     }
 
+    // Lấy danh sách tin nhắn trong phòng chat
     @GetMapping("/chat/messages/{chatRoomId}")
     @ResponseBody
     public List<Map<String, Object>> getChatMessages(@PathVariable String chatRoomId, Principal principal) {
@@ -64,7 +70,7 @@ public class ChatController {
         String currentUserEmail = principal.getName();
         UserDtls currentUser = userRepository.findByEmail(currentUserEmail);
 
-        // Mark messages as read
+        // Đánh dấu tin nhắn là đã đọc
         chatMessageService.markMessagesAsRead(chatRoomId, currentUser.getId());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");

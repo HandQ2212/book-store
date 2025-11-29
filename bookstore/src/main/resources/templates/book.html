@@ -59,20 +59,20 @@
                                             <h5 class="book-title mb-2">[[${p.title}]]</h5>
                                             <div class="mt-auto">
                                                 <div class="price-section mb-3">
-                                                    <!-- If discount > 0: show discounted price and original price -->
+                                                    <!-- Nếu có giảm giá thì hiển thị giá giảm và giá gốc -->
                                                     <th:block th:if="${p.discount > 0}">
                                                         <div class="current-price">
-                                                            [[${@commonUtil.formatPrice(p.discountPrice)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
+                                                            [[${@commonUtil.formatPrice(p.discountPrice)}]]đ
                                                         </div>
                                                         <div>
-                                                            <span class="original-price">[[${@commonUtil.formatPrice(p.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></span>
+                                                            <span class="original-price">[[${@commonUtil.formatPrice(p.price)}]]đ</span>
                                                         </div>
                                                     </th:block>
 
-                                                    <!-- If no discount: show only original price -->
+                                                    <!-- Nếu không giảm giá thì chỉ hiển thị giá gốc -->
                                                     <th:block th:unless="${p.discount > 0}">
                                                         <div class="current-price">
-                                                            [[${@commonUtil.formatPrice(p.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
+                                                            [[${@commonUtil.formatPrice(p.price)}]]đ
                                                         </div>
                                                     </th:block>
                                                 </div>

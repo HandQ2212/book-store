@@ -68,24 +68,24 @@
                                 <tr>
                                     <td>Subtotal</td>
                                     <td>:</td>
-                                    <td>[[${@commonUtil.formatPrice(orderPrice)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+                                    <td>[[${@commonUtil.formatPrice(orderPrice)}]]đ</td>
                                 </tr>
                                 <tr>
                                     <td>Delivery Fee</td>
                                     <td>:</td>
-                                    <td>[[${@commonUtil.formatPrice(deliveryFee)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+                                    <td>[[${@commonUtil.formatPrice(deliveryFee)}]]đ</td>
                                 </tr>
 
                                 <tr>
                                     <td>Tax (5%)</td>
                                     <td>:</td>
-                                    <td>[[${@commonUtil.formatPrice(tax)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+                                    <td>[[${@commonUtil.formatPrice(tax)}]]đ</td>
                                 </tr>
 
                                 <tr class="border-top">
                                     <td><strong>Total Payment</strong></td>
                                     <td>:</td>
-                                    <td><strong>[[${@commonUtil.formatPrice(totalOrderPrice)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></strong></td>
+                                    <td><strong>[[${@commonUtil.formatPrice(totalOrderPrice)}]]đ</strong></td>
                                 </tr>
                                 </tbody>
                             </table>
