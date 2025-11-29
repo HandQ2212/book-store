@@ -52,6 +52,26 @@ public class CommonUtil {
         return true;
     }
 
+    public Boolean sendVerificationMail(String url, String recipientEmail, String userName) throws UnsupportedEncodingException, MessagingException {
+        
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(mailUsername, "Book Store");
+        helper.setTo(recipientEmail);
+
+        String content = "<p>Hello <b>" + userName + "</b>,</p>" 
+                + "<p>Thank you for registering with Book Store!</p>"
+                + "<p>Please click the link below to verify your email address:</p>" 
+                + "<p><a href=\"" + url + "\" style=\"background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;\">Verify Email</a></p>"
+                + "<p>If you did not create an account, please ignore this email.</p>"
+                + "<p>This link will expire in 24 hours.</p>";
+        helper.setSubject("Email Verification - Book Store");
+        helper.setText(content, true);
+        mailSender.send(message);
+        return true;
+    }
+
     public static String generateUrl(HttpServletRequest request) {
 
         String siteUrl = request.getRequestURL().toString();

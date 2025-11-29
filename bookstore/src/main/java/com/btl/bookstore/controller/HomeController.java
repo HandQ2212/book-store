@@ -133,7 +133,8 @@ public class HomeController {
     }
 
     @PostMapping("/saveUser")
-    public String saveUser(@ModelAttribute UserDtls user, @RequestParam("img") MultipartFile file, HttpSession session)
+    public String saveUser(@ModelAttribute UserDtls user, @RequestParam("img") MultipartFile file, 
+                          HttpSession session, HttpServletRequest request)
             throws IOException {
 
         Boolean existsEmail = userService.existsEmail(user.getEmail());
@@ -150,15 +151,29 @@ public class HomeController {
                 }
                 
                 user.setProfileImage(imageName);
+                
+                // Generate verification token
+                String verificationToken = UUID.randomUUID().toString();
+                user.setVerificationToken(verificationToken);
+                user.setIsEnable(false); // Chưa xác nhận email
+                
                 UserDtls saveUser = userService.saveUser(user);
 
                 if (!ObjectUtils.isEmpty(saveUser)) {
-                    session.setAttribute("succMsg", "Register successfully");
+                    // Send verification email
+                    String url = CommonUtil.generateUrl(request) + "/verify-email?token=" + verificationToken;
+                    Boolean emailSent = commonUtil.sendVerificationMail(url, user.getEmail(), user.getName());
+                    
+                    if (emailSent) {
+                        session.setAttribute("succMsg", "Registration successful! Please check your email to verify your account.");
+                    } else {
+                        session.setAttribute("succMsg", "Registered successfully, but failed to send verification email.");
+                    }
                 } else {
                     session.setAttribute("errorMsg", "something wrong on server");
                 }
             } catch (Exception e) {
-                session.setAttribute("errorMsg", "Error uploading image: " + e.getMessage());
+                session.setAttribute("errorMsg", "Error: " + e.getMessage());
             }
         }
 
@@ -255,6 +270,25 @@ public class HomeController {
         }
         List<Book> books = bookService.searchBook(query.trim());
         return books.stream().limit(10).toList();
+    }
+
+    @GetMapping("/verify-email")
+    public String verifyEmail(@RequestParam String token, HttpSession session, Model m) {
+        
+        UserDtls user = userService.getUserByVerificationToken(token);
+        
+        if (user == null) {
+            m.addAttribute("msg", "Invalid or expired verification link!");
+            return "message";
+        }
+        
+        // Enable user account
+        user.setIsEnable(true);
+        user.setVerificationToken(null);
+        userService.updateUser(user);
+        
+        m.addAttribute("msg", "Email verified successfully! You can now login.");
+        return "message";
     }
 
 }

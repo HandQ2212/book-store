@@ -97,13 +97,8 @@
                         <div class="card-body">
                             <!-- <form action="/login" method="post"> -->
                             <div class="mb-3">
-                                <label class="form-label">Select Payment Type</label> <select required
-                                                                                              name="paymentType" class="form-control">
-                                <option value="">--select--</option>
-                                <option value="COD">Cash On Delivery</option>
-                                <option value="ONLINE">Online Payment</option>
-                            </select>
-
+                                <label class="form-label">Payment Type</label>
+                                <input type="text" name="paymentType" class="form-control" value="Cash On Delivery" readonly style="background-color: #e9ecef; cursor: not-allowed;">
                             </div>
 
                             <button class="btn bg-primary text-white col-md-12">Place

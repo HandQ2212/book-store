@@ -122,6 +122,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDtls getUserByVerificationToken(String token) {
+        return userRepository.findByVerificationToken(token);
+    }
+
+    @Override
     public UserDtls updateUser(UserDtls user) {
         return userRepository.save(user);
     }
