@@ -8,6 +8,7 @@ import com.btl.bookstore.service.UserService;
 import com.btl.bookstore.util.CommonUtil;
 import com.btl.bookstore.util.OrderStatus;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -94,13 +97,36 @@ public class UserController {
     }
 
     @GetMapping("/cartQuantityUpdate")
-    public String updateCartQuantity(@RequestParam String sy, @RequestParam Integer cid, HttpSession session) {
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateCartQuantity(
+            @RequestParam Integer cid, 
+            @RequestParam(required = false) String sy,
+            @RequestParam(required = false) Integer qty,
+            HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
         try {
-            cartService.updateQuantity(sy, cid);
+            Cart updatedCart;
+            if (qty != null) {
+                // Cập nhật với số lượng cụ thể
+                updatedCart = cartService.updateQuantityDirect(cid, qty);
+            } else if (sy != null) {
+                // Cập nhật với +/-
+                updatedCart = cartService.updateQuantity(sy, cid);
+            } else {
+                response.put("success", false);
+                response.put("message", "Missing parameters");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            response.put("success", true);
+            response.put("itemTotal", updatedCart.getTotalPrice());
+            response.put("quantity", updatedCart.getQuantity());
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            session.setAttribute("errorMsg", "Số lượng vượt quá kho! " + e.getMessage());
+            response.put("success", false);
+            response.put("message", "Số lượng vượt quá kho! " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
-        return "redirect:/user/cart";
     }
 
     private UserDtls getLoggedInUserDetails(Principal p) {

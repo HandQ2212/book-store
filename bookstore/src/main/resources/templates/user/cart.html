@@ -4,6 +4,52 @@
 <head>
   <meta charset="UTF-8">
   <title>Book Store</title>
+  <style>
+    .quantity-input::-webkit-inner-spin-button,
+    .quantity-input::-webkit-outer-spin-button {
+      opacity: 1;
+      height: 25px;
+    }
+    
+    .quantity-input {
+      font-weight: 600;
+      font-size: 14px;
+      border: 1px solid #dee2e6;
+    }
+    
+    .quantity-input:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .btn-outline-secondary:hover {
+      background-color: #6c757d;
+      color: white;
+      border-color: #6c757d;
+    }
+    
+    .table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #495057;
+    }
+    
+    .table td {
+      vertical-align: middle;
+    }
+    
+    .cart-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    
+    #selectAll {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 <section>
@@ -66,21 +112,39 @@
               <small class="text-muted">Stock: [[${cart.book.stock}]]</small>
               <span th:if="${cart.quantity > cart.book.stock}" class="badge bg-danger ms-2">Không đủ hàng!</span>
             </td>
-            <td>[[${cart.book.discountPrice}]]</td>
-            <td class="text-center"><a
-                    th:href="@{'/user/cartQuantityUpdate?sy=de&cid='+${cart.id}}">
-              <i class="fa-solid fa-minus"></i>
-            </a> [ [[${cart.quantity}]] ] <a
-                    th:href="@{'/user/cartQuantityUpdate?sy=in&cid='+${cart.id}}"
-                    th:classappend="${cart.quantity >= cart.book.stock} ? 'disabled text-muted' : ''">
-              <i class="fa-solid fa-plus"></i>
-            </a></td>
-            <td>[[${cart.totalPrice}]]</td>
+            <td>[[${@commonUtil.formatPrice(cart.book.discountPrice)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+            <td class="text-center">
+              <div class="d-flex align-items-center justify-content-center gap-2">
+                <button class="btn btn-sm btn-outline-secondary" 
+                        th:onclick="'updateQuantity(' + ${cart.id} + ', -1, ' + ${cart.book.stock} + ')'"
+                        style="width: 30px; height: 30px; padding: 0; border-radius: 5px;">
+                  <i class="fa-solid fa-minus"></i>
+                </button>
+                <input type="number" 
+                       th:id="'qty-' + ${cart.id}"
+                       th:value="${cart.quantity}"
+                       th:data-cart-id="${cart.id}"
+                       th:data-stock="${cart.book.stock}"
+                       th:data-price="${cart.book.discountPrice}"
+                       min="1"
+                       th:max="${cart.book.stock}"
+                       class="form-control text-center quantity-input"
+                       style="width: 60px; height: 30px; padding: 0;"
+                       onchange="updateQuantityInput(this)">
+                <button class="btn btn-sm btn-outline-secondary" 
+                        th:onclick="'updateQuantity(' + ${cart.id} + ', 1, ' + ${cart.book.stock} + ')'"
+                        th:disabled="${cart.quantity >= cart.book.stock}"
+                        style="width: 30px; height: 30px; padding: 0; border-radius: 5px;">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+            </td>
+            <td><span th:id="'total-' + ${cart.id}">[[${@commonUtil.formatPrice(cart.totalPrice)}]]</span><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
           </tr>
           <tr th:if="${carts.size() > 0}">
             <td colspan="5"></td>
             <td class="fw-bold">Total Cart Price</td>
-            <td class="fw-bold"><span id="totalPrice">[[${#numbers.formatInteger(totalOrderPrice,0)}]]</span><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
+            <td class="fw-bold"><span id="totalPrice">[[${@commonUtil.formatPrice(totalOrderPrice)}]]</span><th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></td>
           </tr>
 
           </tbody>
@@ -95,6 +159,11 @@
   </div>
 
   <script>
+    // Hàm format số theo kiểu Việt Nam
+    function formatPrice(number) {
+      return Math.round(number).toLocaleString('vi-VN');
+    }
+    
     // Hàm cập nhật tổng tiền khi chọn/bỏ chọn checkbox
     function updateTotal() {
       let total = 0;
@@ -103,13 +172,16 @@
       
       checkboxes.forEach(checkbox => {
         if (checkbox.checked) {
-          const price = parseFloat(checkbox.getAttribute('data-price'));
-          total += price;
+          const cartId = checkbox.getAttribute('data-cart-id');
+          const qtyInput = document.getElementById('qty-' + cartId);
+          const price = parseFloat(qtyInput.getAttribute('data-price'));
+          const quantity = parseInt(qtyInput.value);
+          total += price * quantity;
           selectedCount++;
         }
       });
       
-      document.getElementById('totalPrice').textContent = Math.round(total);
+      document.getElementById('totalPrice').textContent = formatPrice(total);
       
       // Vô hiệu hóa nút nếu không có sản phẩm nào được chọn
       const proceedBtn = document.getElementById('proceedBtn');
@@ -118,6 +190,70 @@
       // Cập nhật trạng thái select all
       const selectAllCheckbox = document.getElementById('selectAll');
       selectAllCheckbox.checked = Array.from(checkboxes).every(cb => cb.checked);
+    }
+    
+    // Hàm cập nhật quantity khi click nút +/-
+    function updateQuantity(cartId, change, stock) {
+      const input = document.getElementById('qty-' + cartId);
+      let newQty = parseInt(input.value) + change;
+      
+      if (newQty < 1) newQty = 1;
+      if (newQty > stock) {
+        alert('Số lượng vượt quá tồn kho!');
+        return;
+      }
+      
+      input.value = newQty;
+      updateCartQuantity(cartId, newQty);
+    }
+    
+    // Hàm cập nhật quantity khi thay đổi trực tiếp input
+    function updateQuantityInput(input) {
+      const cartId = input.getAttribute('data-cart-id');
+      const stock = parseInt(input.getAttribute('data-stock'));
+      let newQty = parseInt(input.value);
+      
+      if (isNaN(newQty) || newQty < 1) {
+        input.value = 1;
+        newQty = 1;
+      }
+      if (newQty > stock) {
+        alert('Số lượng vượt quá tồn kho! Tồn kho hiện tại: ' + stock);
+        input.value = stock;
+        newQty = stock;
+      }
+      
+      updateCartQuantity(cartId, newQty);
+    }
+    
+    // Gửi request cập nhật quantity lên server
+    function updateCartQuantity(cartId, quantity) {
+      const url = `/user/cartQuantityUpdate?cid=${cartId}&qty=${quantity}`;
+      
+      fetch(url, {
+        method: 'GET'
+      }).then(response => response.json())
+      .then(data => {
+        // Cập nhật item total
+        const totalCell = document.getElementById('total-' + cartId);
+        if (totalCell && data.itemTotal) {
+          totalCell.textContent = formatPrice(data.itemTotal);
+        }
+        
+        // Cập nhật tổng giỏ hàng
+        updateTotal();
+        
+        // Cập nhật data-price trong checkbox để tính tổng đúng
+        const checkbox = document.querySelector(`input[data-cart-id="${cartId}"]`);
+        if (checkbox && data.itemTotal) {
+          checkbox.setAttribute('data-price', data.itemTotal);
+          checkbox.setAttribute('data-quantity', quantity);
+        }
+      }).catch(error => {
+        console.error('Error:', error);
+        // Reload page nếu có lỗi
+        location.reload();
+      });
     }
     
     // Hàm chọn/bỏ chọn tất cả

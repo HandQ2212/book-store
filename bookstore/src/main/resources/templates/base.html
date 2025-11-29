@@ -200,9 +200,11 @@
 
             books.forEach(function(book) {
                 const discountPrice = book.discountPrice || book.price;
+                const formattedPrice = Number(book.price).toLocaleString('vi-VN');
+                const formattedDiscountPrice = Number(discountPrice).toLocaleString('vi-VN');
                 const priceDisplay = book.discount > 0
-                    ? `<span class="text-decoration-line-through text-muted">${book.price}đ</span> <span class="text-danger fw-bold">${discountPrice}đ</span>`
-                    : `<span class="fw-bold">${book.price}đ</span>`;
+                    ? `<span class="text-decoration-line-through text-muted">${formattedPrice}đ</span> <span class="text-danger fw-bold">${formattedDiscountPrice}đ</span>`
+                    : `<span class="fw-bold">${formattedPrice}đ</span>`;
 
                 const suggestionItem = $('<a>')
                     .attr('href', '/book/' + book.id)

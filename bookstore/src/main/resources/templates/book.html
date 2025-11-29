@@ -62,17 +62,17 @@
                                                     <!-- If discount > 0: show discounted price and original price -->
                                                     <th:block th:if="${p.discount > 0}">
                                                         <div class="current-price">
-                                                            [[${#numbers.formatInteger(p.discountPrice,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
+                                                            [[${@commonUtil.formatPrice(p.discountPrice)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
                                                         </div>
                                                         <div>
-                                                            <span class="original-price">[[${#numbers.formatInteger(p.price,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></span>
+                                                            <span class="original-price">[[${@commonUtil.formatPrice(p.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block></span>
                                                         </div>
                                                     </th:block>
 
                                                     <!-- If no discount: show only original price -->
                                                     <th:block th:unless="${p.discount > 0}">
                                                         <div class="current-price">
-                                                            [[${#numbers.formatInteger(p.price,0)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
+                                                            [[${@commonUtil.formatPrice(p.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
                                                         </div>
                                                     </th:block>
                                                 </div>

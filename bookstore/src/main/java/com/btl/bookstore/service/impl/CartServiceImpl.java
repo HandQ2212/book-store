@@ -85,7 +85,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateQuantity(String sy, Integer cid) {
+    public Cart updateQuantity(String sy, Integer cid) {
 
         Cart cart = cartRepository.findById(cid).get();
         int updateQuantity;
@@ -95,9 +95,11 @@ public class CartServiceImpl implements CartService {
 
             if (updateQuantity <= 0) {
                 cartRepository.delete(cart);
+                return cart;
             } else {
                 cart.setQuantity(updateQuantity);
-                cartRepository.save(cart);
+                cart.setTotalPrice(cart.getBook().getDiscountPrice() * cart.getQuantity());
+                return cartRepository.save(cart);
             }
         } else {
             updateQuantity = cart.getQuantity() + 1;
@@ -106,9 +108,29 @@ public class CartServiceImpl implements CartService {
                 throw new RuntimeException("Insufficient stock. Available: " + cart.getBook().getStock());
             }
             cart.setQuantity(updateQuantity);
-            cartRepository.save(cart);
+            cart.setTotalPrice(cart.getBook().getDiscountPrice() * cart.getQuantity());
+            return cartRepository.save(cart);
         }
 
+    }
+    
+    @Override
+    public Cart updateQuantityDirect(Integer cid, Integer quantity) {
+        Cart cart = cartRepository.findById(cid).get();
+        
+        if (quantity <= 0) {
+            cartRepository.delete(cart);
+            return cart;
+        }
+        
+        // Kiểm tra stock
+        if (quantity > cart.getBook().getStock()) {
+            throw new RuntimeException("Insufficient stock. Available: " + cart.getBook().getStock());
+        }
+        
+        cart.setQuantity(quantity);
+        cart.setTotalPrice(cart.getBook().getDiscountPrice() * cart.getQuantity());
+        return cartRepository.save(cart);
     }
 
     @Override

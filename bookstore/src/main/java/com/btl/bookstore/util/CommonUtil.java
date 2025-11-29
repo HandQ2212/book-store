@@ -79,6 +79,13 @@ public class CommonUtil {
         return siteUrl.replace(request.getServletPath(), "");
     }
 
+    public static String formatPrice(Number price) {
+        if (price == null) {
+            return "0";
+        }
+        return String.format("%,d", price.longValue()).replace(',', '.');
+    }
+
     String msg=null;;
 
     public Boolean sendMailForBookOrder(BookOrder order,String status) throws Exception

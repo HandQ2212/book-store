@@ -104,8 +104,8 @@
                                 <td th:if="${orderDtls.book != null}">[[${orderDtls.book.title}]]</td>
                                 <td th:unless="${orderDtls.book != null}"><span class="text-danger">Book Deleted</span></td>
                                 <td>Quantity : [[${orderDtls.quantity}]] <br>Price :
-                                    [[${orderDtls.price}]] <br>Total Price
-                                    :[[${orderDtls.quantity * orderDtls.price}]]
+                                    [[${@commonUtil.formatPrice(orderDtls.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block> <br>Total Price
+                                    :[[${@commonUtil.formatPrice(orderDtls.quantity * orderDtls.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
                                 </td>
                                 <td>[[${orderDtls.status}]]</td>
                                 <td>
@@ -164,8 +164,7 @@
                             <td th:if="${o.book != null}">[[${o.book.title}]]</td>
                             <td th:unless="${o.book != null}"><span class="text-danger">Book Deleted</span></td>
                             <td>Quantity : [[${o.quantity}]] <br>Price :
-                                [[${o.price}]] <br>Total Price :[[${o.quantity *
-                                o.price}]]
+                                [[${@commonUtil.formatPrice(o.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block> <br>Total Price :[[${@commonUtil.formatPrice(o.quantity * o.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
                             </td>
                             <td>[[${o.status}]]</td>
                             <td>

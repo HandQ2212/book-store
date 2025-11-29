@@ -44,8 +44,7 @@
                         <td>[[${o.orderDate}]]</td>
                         <td>[[${o.book.title}]]</td>
                         <td>Quantity : [[${o.quantity}]] <br>Price :
-                            [[${o.price}]] <br>Total Price :[[${o.quantity *
-                            o.price}]]
+                            [[${@commonUtil.formatPrice(o.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block> <br>Total Price :[[${@commonUtil.formatPrice(o.quantity * o.price)}]]<th:block th:utext="${@commonServiceImpl.rupeeSign()}"></th:block>
                         </td>
                         <td>[[${o.status}]]</td>
                         <td><th:block th:if="${o.status!='Cancelled'}">
