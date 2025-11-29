@@ -58,27 +58,27 @@ $(function(){
 				required:'Tên không được để trống'
 			},
 			email: {
-				required: 'email name must be required',
-				space: 'space not allowed',
-				email: 'Invalid email'
+				required: 'Email không được để trống',
+				space: 'Không được có khoảng trắng',
+				email: 'Email không hợp lệ'
 			},
 			mobileNumber: {
-				required: 'mob no must be required',
-				space: 'space not allowed',
-				numericOnly: 'invalid mob no',
-				minlength: 'min 10 digit',
-				maxlength: 'max 12 digit'
+				required: 'Số điện thoại không được để trống',
+				space: 'Không được có khoảng trắng',
+				numericOnly: 'Số điện thoại không hợp lệ',
+				minlength: 'Tối thiểu 10 chữ số',
+				maxlength: 'Tối đa 12 chữ số'
 			},
 
 			password: {
-				required: 'password must be required',
-				space: 'space not allowed'
+				required: 'Mật khẩu không được để trống',
+				space: 'Không được có khoảng trắng'
 
 			},
 			confirmpassword: {
-				required: 'confirm password must be required',
-				space: 'space not allowed',
-				equalTo: 'password mismatch'
+				required: 'Xác nhận mật khẩu không được để trống',
+				space: 'Không được có khoảng trắng',
+				equalTo: 'Mật khẩu không khớp'
 
 			},
 			address: {
@@ -92,10 +92,10 @@ $(function(){
 				required: 'Quốc gia không được để trống'
 			},
 			pincode: {
-				required: 'Mã bưu điện không được để trống'
+				required: 'Pincode không được để trống'
 			},
 			img: {
-				required: 'image required',
+				required: 'Vui lòng chọn ảnh',
 			}
 		}
 	})
