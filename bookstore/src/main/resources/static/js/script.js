@@ -35,11 +35,11 @@ $(function(){
 				equalTo: '#pass'
 
 
-		},
-		address: {
-			required: true
+			},
+			address: {
+				required: true
 
-		},
+			},
 			city: {
 				required: true
 			},
@@ -55,47 +55,47 @@ $(function(){
 		},
 		messages:{
 			name:{
-				required:'Tên không được để trống'
+				required:'name must be required'
 			},
 			email: {
-				required: 'Email không được để trống',
-				space: 'Không được có khoảng trắng',
-				email: 'Email không hợp lệ'
+				required: 'email name must be required',
+				space: 'space not allowed',
+				email: 'Invalid email'
 			},
 			mobileNumber: {
-				required: 'Số điện thoại không được để trống',
-				space: 'Không được có khoảng trắng',
-				numericOnly: 'Số điện thoại không hợp lệ',
-				minlength: 'Tối thiểu 10 chữ số',
-				maxlength: 'Tối đa 12 chữ số'
+				required: 'mob no must be required',
+				space: 'space not allowed',
+				numericOnly: 'invalid mob no',
+				minlength: 'min 10 digit',
+				maxlength: 'max 12 digit'
 			},
 
 			password: {
-				required: 'Mật khẩu không được để trống',
-				space: 'Không được có khoảng trắng'
+				required: 'password must be required',
+				space: 'space not allowed'
 
 			},
 			confirmpassword: {
-				required: 'Xác nhận mật khẩu không được để trống',
-				space: 'Không được có khoảng trắng',
-				equalTo: 'Mật khẩu không khớp'
+				required: 'confirm password must be required',
+				space: 'space not allowed',
+				equalTo: 'password mismatch'
 
 			},
 			address: {
-				required: 'Địa chỉ không được để trống'
+				required: 'address must be required'
 			},
 
 			city: {
-				required: 'Thành phố không được để trống'
+				required: 'city must be required'
 			},
 			state: {
-				required: 'Quốc gia không được để trống'
+				required: 'state must be required'
 			},
 			pincode: {
-				required: 'Pincode không được để trống'
+				required: 'pincode must be required'
 			},
 			img: {
-				required: 'Vui lòng chọn ảnh',
+				required: 'image required',
 			}
 		}
 	})
@@ -103,9 +103,9 @@ $(function(){
 
 // Orders Validation
 
-var $orders=$("#orders");
+	var $orders=$("#orders");
 
-$orders.validate({
+	$orders.validate({
 		rules:{
 			firstName:{
 				required:true
@@ -141,7 +141,7 @@ $orders.validate({
 				required: true
 			},
 			paymentType:{
-			required: true
+				required: true
 			}
 		},
 		messages:{
@@ -165,31 +165,31 @@ $orders.validate({
 				minlength: 'min 10 digit',
 				maxlength: 'max 12 digit'
 			}
-		   ,
+			,
 			address: {
-				required: 'Địa chỉ không được để trống'
+				required: 'address must be required'
 			},
 
 			city: {
-				required: 'Thành phố không được để trống'
+				required: 'city must be required'
 			},
 			state: {
-				required: 'Quốc gia không được để trống'
+				required: 'state must be required'
 			},
 			pincode: {
-				required: 'Mã bưu điện không được để trống'
+				required: 'pincode must be required'
 			},
 			paymentType:{
-			required: 'select payment type'
+				required: 'select payment type'
 			}
 		}
-})
+	})
 
 // Reset Password Validation
 
-var $resetPassword=$("#resetPassword");
+	var $resetPassword=$("#resetPassword");
 
-$resetPassword.validate({
+	$resetPassword.validate({
 
 		rules:{
 			password: {
@@ -205,7 +205,7 @@ $resetPassword.validate({
 			}
 		},
 		messages:{
-		   password: {
+			password: {
 				required: 'password must be required',
 				space: 'space not allowed'
 
@@ -217,24 +217,24 @@ $resetPassword.validate({
 
 			}
 		}
-})
+	})
 })
 
 
 
 jQuery.validator.addMethod('lettersonly', function(value, element) {
-		return /^[^-\s][a-zA-Z_\s-]+$/.test(value);
-	});
+	return /^[^-\s][a-zA-Z_\s-]+$/.test(value);
+});
 
-		jQuery.validator.addMethod('space', function(value, element) {
-		return /^[^-\s]+$/.test(value);
-	});
+jQuery.validator.addMethod('space', function(value, element) {
+	return /^[^-\s]+$/.test(value);
+});
 
-	jQuery.validator.addMethod('all', function(value, element) {
-		return /^[^-\s][a-zA-Z0-9_,.\s-]+$/.test(value);
-	});
+jQuery.validator.addMethod('all', function(value, element) {
+	return /^[^-\s][a-zA-Z0-9_,.\s-]+$/.test(value);
+});
 
 
-	jQuery.validator.addMethod('numericOnly', function(value, element) {
-		return /^[0-9]+$/.test(value);
-	});
+jQuery.validator.addMethod('numericOnly', function(value, element) {
+	return /^[0-9]+$/.test(value);
+});
